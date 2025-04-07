@@ -99,6 +99,10 @@ def filter_images_by_date(folder, target_month, target_year):
         if date:
             if (date.strftime('%B').lower() == target_month.lower() and date.year == target_year):
                 matching_images.append(path)
+        else:
+            # If not date was found for the image, we will consider it part of what could be returned to user
+            matching_images.append(path)
+
     return matching_images
 
 if __name__ == '__main__':
