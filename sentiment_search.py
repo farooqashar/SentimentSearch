@@ -53,6 +53,9 @@ def extract_query_info(text):
     return emotion_category, found_month, found_year, top_n
 
 def word_to_number(word):
+    """
+    Converts a word numeric to an actual numberic
+    """
     number_words = {
         "one": 1, "two": 2, "three": 3, "four": 4, "five": 5,
         "six": 6, "seven": 7, "eight": 8, "nine": 9, "ten": 10
