@@ -120,28 +120,42 @@ emotion_map = {
     "disgust": "negative"
 }
 
-def filter_images_by_emotion(image_paths, desired_category):
+def filter_images_by_emotion(image_paths, desired_category, top_n=3):
     """
-    Detecting dominant emotion in images and collecting matching images
+    Detecting dominant emotion in images and collecting top n matching images
     """
-    matched = []
+    scored_images = []
 
     for path in image_paths:
         print(f"🖼️ Analyzing: {os.path.basename(path)}")
         try:
             result = DeepFace.analyze(img_path=path, actions=["emotion"], enforce_detection=False)
-            dominant = result[0]["dominant_emotion"].lower()
-            mapped = emotion_map.get(dominant, "neutral")
+            emotion_scores = result[0]["emotion"]  # dictionary of emotion: score
+            dominant_emotion = result[0]["dominant_emotion"].lower()
 
-            print(f"   → Detected: {dominant} → Category: {mapped}")
+            # Get overall sentiment category of dominant emotion
+            mapped_category = emotion_map.get(dominant_emotion, "neutral")
 
-            if mapped == desired_category:
-                matched.append(path)
+            if mapped_category == desired_category:
+                # Score = confidence in the matching emotion category
+                relevant_emotions = [k for k, v in emotion_map.items() if v == desired_category]
+                strength_score = sum(emotion_scores.get(e, 0) for e in relevant_emotions)
+
+                scored_images.append({
+                    "path": path,
+                    "dominant": dominant_emotion,
+                    "score": strength_score
+                })
+
+                print(f"   → Detected: {dominant_emotion} | Score: {strength_score:.2f}")
 
         except Exception as e:
             print(f"   ❌ Error analyzing {path}: {e}")
 
-    return matched
+    # Sort images by strength score (descending)
+    top_images = sorted(scored_images, key=lambda x: x["score"], reverse=True)
+
+    return {elt["path"] for elt in top_images[:top_n]}
 
 if __name__ == '__main__':
     print("🎉 Welcome to SentimentSearch!")
