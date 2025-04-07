@@ -1,6 +1,7 @@
 
-images
 venv
 realtimesst.log
 
 __pycache__
+
+emotion_cache.json
