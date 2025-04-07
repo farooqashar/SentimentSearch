@@ -5,6 +5,8 @@ import os
 from PIL import Image
 from PIL.ExifTags import TAGS
 from datetime import datetime
+from deepface import DeepFace
+
 
 ## SPEECH TO TEXT ##
 def extract_query_info(text):
@@ -104,6 +106,42 @@ def filter_images_by_date(folder, target_month, target_year):
             matching_images.append(path)
 
     return matching_images
+
+## EMOTION DETECTION ##
+
+# Map DeepFace emotions to high-level sentiment categories
+emotion_map = {
+    "happy": "positive",
+    "surprise": "positive",
+    "neutral": "neutral",
+    "sad": "negative",
+    "angry": "negative",
+    "fear": "negative",
+    "disgust": "negative"
+}
+
+def filter_images_by_emotion(image_paths, desired_category):
+    """
+    Detecting dominant emotion in images and collecting matching images
+    """
+    matched = []
+
+    for path in image_paths:
+        print(f"🖼️ Analyzing: {os.path.basename(path)}")
+        try:
+            result = DeepFace.analyze(img_path=path, actions=["emotion"], enforce_detection=False)
+            dominant = result[0]["dominant_emotion"].lower()
+            mapped = emotion_map.get(dominant, "neutral")
+
+            print(f"   → Detected: {dominant} → Category: {mapped}")
+
+            if mapped == desired_category:
+                matched.append(path)
+
+        except Exception as e:
+            print(f"   ❌ Error analyzing {path}: {e}")
+
+    return matched
 
 if __name__ == '__main__':
     print("🎉 Welcome to SentimentSearch!")
