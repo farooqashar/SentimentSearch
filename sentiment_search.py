@@ -37,37 +37,27 @@ def extract_query_info(text):
     year_match = re.search(r"\b(20\d{2}|19\d{2})\b", text)
     found_year = int(year_match.group(1)) if year_match else None
 
-    return emotion_category, found_month, found_year
-
-
-def process_text(text):
-    """
-    Wrapper logic function to process the text that the user spoke with feedback
-    """
-    print("\n📝 You said:", text)
-
-    emotion_category, month, year = extract_query_info(text)
-
-    # Show results to the user
-    match emotion_category:
-        case "positive":
-            print("😄 Sentiment detected: POSITIVE (happy, joyful, etc.)")
-        case "negative":
-            print("😞 Sentiment detected: NEGATIVE (sad, angry, etc.)")
-        case _:
-            print("😐 Sentiment detected: NEUTRAL")
-
-    if month and year:
-        print(f"📆 Timeframe detected: {month.title()} {year}")
-    elif month:
-        print(f"📆 Month detected: {month.title()} (year missing)")
-    elif year:
-        print(f"📆 Year detected: {year} (month missing)")
+    # Detect "top N"
+    top_n = 3  # default fallback of top 3 outputs to the user
+    match = re.search(r"top\s+(\d+)", text)
+    if match:
+        top_n = int(match.group(1))
     else:
-        print("📆 No clear date found.")
+        # Try matching number words
+        for word in text.split():
+            if word in {"one", "two", "three", "four", "five", "six", "seven", "eight", "nine", "ten"}:
+                if "top" in text:
+                    top_n = word_to_number(word)
+                    break
 
-    print("\n✅ Ready to search for matching photos based on sentiment and timeframe...\n")
+    return emotion_category, found_month, found_year, top_n
 
+def word_to_number(word):
+    number_words = {
+        "one": 1, "two": 2, "three": 3, "four": 4, "five": 5,
+        "six": 6, "seven": 7, "eight": 8, "nine": 9, "ten": 10
+    }
+    return number_words.get(word.lower(), None)
 
 ## PROCESSING IMAGES ##
 def get_image_date(image_path):
@@ -155,12 +145,56 @@ def filter_images_by_emotion(image_paths, desired_category, top_n=3):
     # Sort images by strength score (descending)
     top_images = sorted(scored_images, key=lambda x: x["score"], reverse=True)
 
-    return {elt["path"] for elt in top_images[:top_n]}
+    return top_images[:top_n]
+
+## PROCESSING LOGIC FLOW ##
+def process_logic(text):
+    """
+    Wrapper logic function to manage the flow and provide feedback to the user
+    """
+    print("\n📝 You said:", text)
+
+    emotion_category, month, year, top_n = extract_query_info(text)
+
+    # Show results to the user
+    match emotion_category:
+        case "positive":
+            print("😄 Sentiment detected: POSITIVE (happy, joyful, etc.)")
+        case "negative":
+            print("😞 Sentiment detected: NEGATIVE (sad, angry, etc.)")
+        case _:
+            print("😐 Sentiment detected: NEUTRAL")
+
+    if month and year:
+        print(f"📆 Timeframe detected: {month.title()} {year}")
+    elif month:
+        print(f"📆 Month detected: {month.title()} (year missing)")
+    elif year:
+        print(f"📆 Year detected: {year} (month missing)")
+    else:
+        print("📆 No clear date found.")
+
+    print(f"🏆 Top {top_n} results requested")
+
+    print("\n✅ Ready to search for matching photos based on sentiment and timeframe...\n")
+
+    folder = "images"
+    filtered_images = filter_images_by_date(folder, month, year)
+
+    print(f"\n📂 Found {len(filtered_images)} images from {month.title()} {year}:")
+    for f in filtered_images:
+        print(" -", f)
+
+    top_emotion_results = filter_images_by_emotion(filtered_images, emotion_category, top_n)
+
+    print(f"\n✅ Top {top_n} {emotion_category} images:")
+    for r in top_emotion_results:
+        print(f" - {r['path']} (Score: {r['score']:.2f}, Emotion: {r['dominant']})")
 
 if __name__ == '__main__':
     print("🎉 Welcome to SentimentSearch!")
     print("🎤 Please wait for the prompt, then speak your query.")
-    print("💬 Try something like: 'Show me the not fun pictures from January 2022'\n")
+    print("💬 Try something like: 'Show me the top 4 not fun pictures from January 2022'\n")
 
     recorder = AudioToTextRecorder()
-    recorder.text(process_text)
+    recorder.text(process_logic)
