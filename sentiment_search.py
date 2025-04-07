@@ -7,6 +7,7 @@ from PIL.ExifTags import TAGS
 from datetime import datetime
 from deepface import DeepFace
 import json
+import cv2
 
 
 ## CACHING ##
@@ -181,6 +182,26 @@ def filter_images_by_emotion(image_paths, desired_category, top_n=3):
     return top_images[:top_n]
 
 ## PROCESSING LOGIC FLOW ##
+
+def show_images(image_results):
+    """
+    Displaying the final image matches to the user
+    """
+    for r in image_results:
+        img = cv2.imread(r["path"])
+
+        # Resize to a fixed width of 800 while keeping aspect ratio
+        fixed_width = 800
+        height, width = img.shape[:2]
+        scale = fixed_width / width
+        new_dims = (fixed_width, int(height * scale))
+        img = cv2.resize(img, new_dims)
+
+        label = f"{os.path.basename(r['path'])} ({r['dominant']} - {r['score']:.2f})"
+        cv2.imshow(label, img)
+        cv2.waitKey(0)
+    cv2.destroyAllWindows()
+
 def process_logic(text):
     """
     Wrapper logic function to manage the flow and provide feedback to the user
@@ -224,10 +245,16 @@ def process_logic(text):
     for r in top_emotion_results:
         print(f" - {r['path']} (Score: {r['score']:.2f}, Emotion: {r['dominant']})")
 
+    if top_emotion_results:
+        print("\n🖼️ Displaying top results...")
+        show_images(top_emotion_results)
+    else:
+        print("⚠️ No matching images to display.")
+
 if __name__ == '__main__':
     print("🎉 Welcome to SentimentSearch!")
     print("🎤 Please wait for the prompt, then speak your query.")
-    print("💬 Try something like: 'Show me the top 4 not fun pictures from February of 2025'\n")
+    print("💬 Try something like: 'Show me the top 4 not negative pictures from February of 2025'\n")
 
     recorder = AudioToTextRecorder()
     recorder.text(process_logic)
