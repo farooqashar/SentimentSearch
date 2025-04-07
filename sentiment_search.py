@@ -6,6 +6,24 @@ from PIL import Image
 from PIL.ExifTags import TAGS
 from datetime import datetime
 from deepface import DeepFace
+import json
+
+
+## CACHING ##
+def load_cache(cache_file="emotion_cache.json"):
+    """
+    Load a simple image analysis cache
+    """
+    if os.path.exists(cache_file):
+        with open(cache_file, "r") as f:
+            return json.load(f)
+    return {}
+
+def save_cache(cache, cache_file="emotion_cache.json"):
+    """
+    Save a simple cache"""
+    with open(cache_file, "w") as f:
+        json.dump(cache, f, indent=2)
 
 
 ## SPEECH TO TEXT ##
@@ -117,12 +135,22 @@ def filter_images_by_emotion(image_paths, desired_category, top_n=3):
     """
     Detecting dominant emotion in images and collecting top n matching images
     """
+    cache = load_cache()
+
     scored_images = []
 
     for path in image_paths:
         print(f"🖼️ Analyzing: {os.path.basename(path)}")
+        path_key = os.path.abspath(path)
         try:
-            result = DeepFace.analyze(img_path=path, actions=["emotion"], enforce_detection=False)
+            if path_key in cache:
+                result = cache[path_key]
+                print("   ↪ Using cached result")
+            else:
+                result = DeepFace.analyze(img_path=path, actions=["emotion"], enforce_detection=False)
+                cache[path_key] = result
+
+
             emotion_scores = result[0]["emotion"]  # dictionary of emotion: score
             dominant_emotion = result[0]["dominant_emotion"].lower()
 
@@ -144,6 +172,8 @@ def filter_images_by_emotion(image_paths, desired_category, top_n=3):
 
         except Exception as e:
             print(f"   ❌ Error analyzing {path}: {e}")
+
+    save_cache(cache)
 
     # Sort images by strength score (descending)
     top_images = sorted(scored_images, key=lambda x: x["score"], reverse=True)
@@ -197,7 +227,7 @@ def process_logic(text):
 if __name__ == '__main__':
     print("🎉 Welcome to SentimentSearch!")
     print("🎤 Please wait for the prompt, then speak your query.")
-    print("💬 Try something like: 'Show me the top 4 not fun pictures from January 2022'\n")
+    print("💬 Try something like: 'Show me the top 4 not fun pictures from February of 2025'\n")
 
     recorder = AudioToTextRecorder()
     recorder.text(process_logic)
