@@ -10,6 +10,10 @@ import json
 import cv2
 import threading
 
+## GLOBAL EVALUATION TRACKERS ##
+total_speech_to_text_accuracy = 0
+total_image_retrieval_accuracy = 0
+num_queries = 0
 
 ## CACHING ##
 def load_cache(cache_file="emotion_cache.json"):
@@ -261,7 +265,7 @@ def process_logic(text):
 
     print(f"🏆 Top {top_n} results requested")
 
-    confirm_and_evaluate_parsing(emotion_category, month, year, top_n)
+    speech_to_text_accuracy = confirm_and_evaluate_parsing(emotion_category, month, year, top_n)
 
     print("\n✅ Ready to search for matching photos based on sentiment and timeframe...\n")
 
@@ -278,11 +282,14 @@ def process_logic(text):
     for r in top_emotion_results:
         print(f" - {r['path']} (Score: {r['score']:.2f}, Emotion: {r['dominant']})")
 
+    image_retrieval_accuracy = None
     if top_emotion_results:
         print("\n🖼️ Displaying top results...")
-        show_images_with_feedback(top_emotion_results, emotion_category)
+        image_retrieval_accuracy = show_images_with_feedback(top_emotion_results, emotion_category)
     else:
         print("⚠️ No matching images to display.")
+
+    return speech_to_text_accuracy, image_retrieval_accuracy
 
 if __name__ == '__main__':
     print("🎉 Welcome to SentimentSearch!")
@@ -295,7 +302,14 @@ if __name__ == '__main__':
         done_event = threading.Event()
 
         def wrapped_process_logic(text):
-            process_logic(text)
+            global total_speech_to_text_accuracy, total_image_retrieval_accuracy, num_queries
+
+            speech_acr, image_acr = process_logic(text)
+
+            total_speech_to_text_accuracy += speech_acr
+            total_image_retrieval_accuracy += image_acr
+            num_queries += 1
+
             done_event.set()
 
         # Wait Until The Logic Has Been Processed Before Asking The User For Potentially Another Query
@@ -304,5 +318,11 @@ if __name__ == '__main__':
 
         cont = input("\n🔁 Do you want to try another query? (yes/no): ").strip().lower()
         if cont not in ["yes", "y"]:
-            print("👋 Goodbye! Thanks for using SentimentSearch.")
+            if num_queries != 0:
+                avg_speech_to_text_acr = total_speech_to_text_accuracy / num_queries
+                avg_img_acr = total_image_retrieval_accuracy / num_queries
+                print(f"\n📊 Session Summary:")
+                print(f"• Average Speech To Text Parsing Accuracy: {avg_speech_to_text_acr:.2f}%")
+                print(f"• Average Image Sentiment Matching Accuracy: {avg_img_acr:.2f}%")
+                print("👋 Goodbye! Thanks for using SentimentSearch.")
             break
