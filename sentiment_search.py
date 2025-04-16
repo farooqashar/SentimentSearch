@@ -8,6 +8,7 @@ from datetime import datetime
 from deepface import DeepFace
 import json
 import cv2
+import threading
 
 
 ## CACHING ##
@@ -289,4 +290,19 @@ if __name__ == '__main__':
     print("💬 Try something like: 'Show me the top 4 not negative pictures from February of 2025'\n")
 
     recorder = AudioToTextRecorder()
-    recorder.text(process_logic)
+
+    while True:
+        done_event = threading.Event()
+
+        def wrapped_process_logic(text):
+            process_logic(text)
+            done_event.set()
+
+        # Wait Until The Logic Has Been Processed Before Asking The User For Potentially Another Query
+        recorder.text(wrapped_process_logic)
+        done_event.wait()
+
+        cont = input("\n🔁 Do you want to try another query? (yes/no): ").strip().lower()
+        if cont not in ["yes", "y"]:
+            print("👋 Goodbye! Thanks for using SentimentSearch.")
+            break
