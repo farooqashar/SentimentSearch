@@ -81,6 +81,30 @@ def word_to_number(word):
     }
     return number_words.get(word.lower(), None)
 
+## EVALUATION OF SPEECH TO TEXT
+def confirm_and_evaluate_parsing(emotion_category, month, year, top_n):
+    print("\n🔍 Evaluation Time For Speech To Text:")
+    print("Please confirm the following parsed values:")
+
+    ground_truth = {}
+    ground_truth['emotion'] = input(f"→ Was the emotion '{emotion_category}' correct? (enter 'yes' or 'no'): ").strip().lower()
+    ground_truth['month'] = input(f"→ Was the month '{month}' correct? (enter 'yes' or 'no'): ").strip().lower()
+    ground_truth['year'] = input(f"→ Was the year '{year}' correct? (enter 'yes' or 'no'): ").strip().lower()
+    ground_truth['top_n'] = input(f"→ Was the top_n value '{top_n}' correct? (enter 'yes' or 'no'): ").strip().lower()
+
+    correct = 0
+    total = 4
+
+    if ground_truth['emotion'] == "yes": correct += 1
+    if ground_truth['month'] == "yes": correct += 1
+    if ground_truth['year'] == "yes": correct += 1
+    if ground_truth['top_n'] == "yes": correct += 1
+
+    accuracy = (correct / total) * 100
+    print(f"\n📊 Speech To Text Parsing Accuracy: {accuracy:.2f}%")
+    return accuracy
+
+
 ## PROCESSING IMAGES ##
 def get_image_date(image_path):
     """
@@ -183,14 +207,12 @@ def filter_images_by_emotion(image_paths, desired_category, top_n=3):
 
 ## PROCESSING LOGIC FLOW ##
 
-def show_images(image_results):
-    """
-    Displaying the final image matches to the user
-    """
+# EVALUATION FOR IMAGE RETRIEVAL SENTIMENT MATCHES #
+def show_images_with_feedback(image_results, expected_emotion):
+    correct = 0
     for r in image_results:
         img = cv2.imread(r["path"])
 
-        # Resize to a fixed width of 800 while keeping aspect ratio
         fixed_width = 800
         height, width = img.shape[:2]
         scale = fixed_width / width
@@ -200,7 +222,15 @@ def show_images(image_results):
         label = f"{os.path.basename(r['path'])} ({r['dominant']} - {r['score']:.2f})"
         cv2.imshow(label, img)
         cv2.waitKey(0)
-    cv2.destroyAllWindows()
+        cv2.destroyAllWindows()
+
+        feedback = input(f"✅ Does this image match '{expected_emotion}' sentiment? (yes/no): ").strip().lower()
+        if feedback == "yes":
+            correct += 1
+
+    accuracy = (correct / len(image_results)) * 100 if image_results else 0
+    print(f"\n🧪 Emotion Matching Photos Retrieval Accuracy: {accuracy:.2f}%")
+    return accuracy
 
 def process_logic(text):
     """
@@ -230,6 +260,8 @@ def process_logic(text):
 
     print(f"🏆 Top {top_n} results requested")
 
+    confirm_and_evaluate_parsing(emotion_category, month, year, top_n)
+
     print("\n✅ Ready to search for matching photos based on sentiment and timeframe...\n")
 
     folder = "images"
@@ -247,7 +279,7 @@ def process_logic(text):
 
     if top_emotion_results:
         print("\n🖼️ Displaying top results...")
-        show_images(top_emotion_results)
+        show_images_with_feedback(top_emotion_results, emotion_category)
     else:
         print("⚠️ No matching images to display.")
 
