@@ -175,7 +175,7 @@ def filter_images_by_emotion(image_paths, desired_category, top_n=3):
         try:
             if path_key in cache:
                 result = cache[path_key]
-                print("   ↪ Using cached result")
+                print("↪ Using cached result")
             else:
                 result = DeepFace.analyze(img_path=path, actions=["emotion"], enforce_detection=False)
                 cache[path_key] = result
@@ -198,10 +198,10 @@ def filter_images_by_emotion(image_paths, desired_category, top_n=3):
                     "score": strength_score
                 })
 
-                print(f"   → Detected: {dominant_emotion} | Score: {strength_score:.2f}")
+                print(f"→ Detected: {dominant_emotion} | Score: {strength_score:.2f}")
 
         except Exception as e:
-            print(f"   ❌ Error analyzing {path}: {e}")
+            print(f"❌ Error analyzing {path}: {e}")
 
     save_cache(cache)
 
