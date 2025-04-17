@@ -5,3 +5,4 @@ realtimesst.log
 __pycache__
 
 emotion_cache.json
+session_results.jsonl
