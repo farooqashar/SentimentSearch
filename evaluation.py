@@ -42,4 +42,8 @@ def evaluate_session(log_file="session_results.jsonl"):
         print("🖼️ No image sentiment records found.")
 
 if __name__ == "__main__":
-    evaluate_session("session_results.jsonl")
+    # # V1 Evaluation
+    # evaluate_session("session_results.jsonl")
+
+    # V2 Evaluation
+    evaluate_session("session_results_v2.jsonl")

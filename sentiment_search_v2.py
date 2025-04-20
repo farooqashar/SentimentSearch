@@ -12,8 +12,8 @@ import threading
 from util import complex_emotion_map
 
 ## CONFIGURATION ##
-debug = False
-session_log_path = "session_results.jsonl"
+debug = True
+session_log_path = "session_results_v2.jsonl"
 open(session_log_path, "w").close()  # Clear log file each session
 
 def debug_print(*args, **kwargs):
@@ -196,14 +196,15 @@ def process_logic(text):
 
     debug_print(f"🏆 Top {top_n} results requested")
 
-    log_prediction("speech_to_text", text, {
+    predicted_speech_to_text = {
         "emotion": detected_emotion,
         "month": month,
         "year": year,
         "top_n": top_n
-    })
+    }
+    log_prediction("speech_to_text", text, predicted_speech_to_text)
 
-    folder = "images"
+    folder = "images_v2"
     debug_print("\n✅ Ready to search for matching photos...\n")
     filtered_images = filter_images_by_date(folder, month, year)
 
@@ -216,7 +217,7 @@ def process_logic(text):
     debug_print(f"\n✅ Top {top_n} {detected_emotion} images:")
     for r in top_emotion_results:
         debug_print(f" - {r['path']} (Score: {r['score']:.2f}, Emotion: {r['dominant']})")
-        predicted_image_emotion = r["path"].split("_")[0]
+        predicted_image_emotion = r["path"].split("_")[1].split('\\')[1]
         log_prediction("image", r["path"], predicted=predicted_image_emotion, expected=detected_emotion)
 
     if top_emotion_results:

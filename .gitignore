@@ -6,3 +6,4 @@ __pycache__
 
 emotion_cache.json
 session_results.jsonl
+session_results_v2.jsonl
