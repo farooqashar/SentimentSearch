@@ -179,6 +179,7 @@ def show_images(image_results):
         cv2.waitKey(0)
     cv2.destroyAllWindows()
 
+## OVERALL LOGIC FLOW ##
 def process_logic(text):
     print("\n📝 You said:", text)
 
