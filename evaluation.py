@@ -26,9 +26,12 @@ def evaluate_session(log_file="session_results.jsonl"):
                 pred_emotion = entry["predicted"]
                 expected_key = entry["expected"]
 
-                allowed = complex_emotion_map.get(expected_key, [expected_key])
-                if pred_emotion in allowed:
+                if pred_emotion == expected_key:
                     img_correct += 1
+                else:
+                    allowed = complex_emotion_map.get(expected_key, [expected_key])
+                    if pred_emotion in allowed:
+                        img_correct += 1
 
     print("\n📊 Evaluation Results:")
     if stt_total:

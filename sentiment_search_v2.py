@@ -21,13 +21,13 @@ def debug_print(*args, **kwargs):
         print(*args, **kwargs)
 
 ## CACHING ##
-def load_cache(cache_file="emotion_cache.json"):
+def load_cache(cache_file="emotion_cache_v2.json"):
     if os.path.exists(cache_file):
         with open(cache_file, "r") as f:
             return json.load(f)
     return {}
 
-def save_cache(cache, cache_file="emotion_cache.json"):
+def save_cache(cache, cache_file="emotion_cache_v2.json"):
     with open(cache_file, "w") as f:
         json.dump(cache, f, indent=2)
 
@@ -202,7 +202,13 @@ def process_logic(text):
         "year": year,
         "top_n": top_n
     }
-    log_prediction("speech_to_text", text, predicted_speech_to_text)
+    expected_speech_to_text = {
+        "emotion": None,
+        "month": None,
+        "year": None,
+        "top_n": None
+    }
+    log_prediction("speech_to_text", text, predicted_speech_to_text, expected_speech_to_text)
 
     folder = "images_v2"
     debug_print("\n✅ Ready to search for matching photos...\n")
