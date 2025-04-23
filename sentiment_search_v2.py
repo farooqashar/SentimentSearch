@@ -144,6 +144,11 @@ def filter_images_by_emotion(image_paths, desired_emotion, top_n=3):
                 debug_print("↪ Using cached result")
             else:
                 result = DeepFace.analyze(img_path=path, actions=["emotion"], enforce_detection=False)
+                for i in range(len(result)):
+                    emotions_converted = {k: float(v) for k, v in result[i]["emotion"].items()}
+                    result[i]["emotion"] = emotions_converted
+                    result[i]["dominant_emotion"] = str(result[i]["dominant_emotion"])
+
                 cache[path_key] = result
 
             emotion_scores = result[0]["emotion"]
@@ -224,7 +229,7 @@ def process_logic(text):
     debug_print(f"\n✅ Top {top_n} {detected_emotion} images:")
     for r in top_emotion_results:
         debug_print(f" - {r['path']} (Score: {r['score']:.2f}, Emotion: {r['dominant']})")
-        predicted_image_emotion = r["path"].split("_")[1].split('\\')[1]
+        predicted_image_emotion = os.path.basename(r["path"]).split("_")[0]
         log_prediction("image", r["path"], predicted=predicted_image_emotion, expected=detected_emotion)
 
     if top_emotion_results:
@@ -232,6 +237,8 @@ def process_logic(text):
         show_images(top_emotion_results)
     else:
         print("⚠️ No matching images to display.")
+
+    return top_emotion_results
 
 if __name__ == '__main__':
     print("🎉 Welcome to SentimentSearch!")
@@ -244,7 +251,8 @@ if __name__ == '__main__':
         done_event = threading.Event()
 
         def wrapped_process_logic(text):
-            process_logic(text)
+            result = process_logic(text)
+            threading.Timer(0.1, lambda: show_images(result)).start()
             done_event.set()
 
         recorder.text(wrapped_process_logic)
