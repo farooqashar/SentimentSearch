@@ -238,8 +238,6 @@ def process_logic(text):
     else:
         print("⚠️ No matching images to display.")
 
-    return top_emotion_results
-
 if __name__ == '__main__':
     print("🎉 Welcome to SentimentSearch!")
     print("🎤 Please wait for the prompt, then speak your query.")
@@ -251,8 +249,7 @@ if __name__ == '__main__':
         done_event = threading.Event()
 
         def wrapped_process_logic(text):
-            result = process_logic(text)
-            threading.Timer(0.1, lambda: show_images(result)).start()
+            process_logic(text)
             done_event.set()
 
         recorder.text(wrapped_process_logic)
