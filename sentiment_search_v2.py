@@ -9,6 +9,7 @@ from deepface import DeepFace
 import json
 import cv2
 import threading
+from geopy.geocoders import Nominatim
 from util import complex_emotion_map
 
 ## CONFIGURATION ##
@@ -129,6 +130,51 @@ def filter_images_by_date(folder, target_month, target_year):
 
     return matching_images
 
+def dms_to_decimal(dms, ref):
+    degrees, minutes, seconds = dms
+    decimal = degrees + minutes / 60 + seconds / 3600
+    if ref in ['S', 'W']:
+        decimal *= -1
+    return float(decimal)
+
+def get_image_location(image_path):
+    try:
+        img = Image.open(image_path)
+        exif_data = img._getexif()
+        if not exif_data:
+            return None
+        for tag_id, value in exif_data.items():
+            tag = TAGS.get(tag_id, tag_id)
+            if tag == "GPSInfo":
+                lat = dms_to_decimal(value[2], value[1])
+                lon = dms_to_decimal(value[4], value[3])
+
+                geolocator = Nominatim(user_agent="sentiment-search")
+                location = geolocator.reverse(str(lat)+","+str(lon))
+
+                return location.address if location else None
+                
+    except Exception as e:
+        debug_print(f"⚠️ Could not get location from {image_path}: {e}")
+    return None
+
+def filter_images_by_location(folder, target_location):
+    matching_images = []
+    for fname in os.listdir(folder):
+        if not fname.lower().endswith((".jpg", ".jpeg", ".png")):
+            continue
+
+        path = os.path.join(folder, fname)
+        location = get_image_location(path)
+        if location:
+            if target_location in location:
+                matching_images.append(path)
+        else:
+            matching_images.append(path)
+
+    return matching_images
+
+
 ## EMOTION MATCHING ##
 def filter_images_by_emotion(image_paths, desired_emotion, top_n=3):
     cache = load_cache()
@@ -180,7 +226,7 @@ def show_images(image_results):
         img = cv2.resize(img, new_dims)
 
         label = f"{os.path.basename(r['path'])} ({r['dominant']} - {r['score']:.2f})"
-        cv2.imshow(label, img)
+        # cv2.imshow(label, img)
         cv2.waitKey(0)
     cv2.destroyAllWindows()
 
@@ -218,6 +264,7 @@ def process_logic(text):
 
     folder = "static/images_v2"
     debug_print("\n✅ Ready to search for matching photos...\n")
+    filter_images_by_location(folder,"Seoul")
     filtered_images = filter_images_by_date(folder, month, year)
 
     debug_print(f"\n📂 Found {len(filtered_images)} images from {month.title()} {year}:")
