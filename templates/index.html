@@ -4,21 +4,77 @@
     <meta charset="UTF-8">
     <title>SentimentSearch Web</title>
     <style>
-        img { width: 200px; margin: 10px; border-radius: 8px; box-shadow: 0 2px 6px rgba(0,0,0,0.2); }
-        .result { display: inline-block; text-align: center; margin: 15px; }
+        body {
+            font-family: Arial, sans-serif;
+            background: #f4f6f8;
+            text-align: center;
+            padding: 30px;
+        }
+        h1 {
+            color: #333;
+        }
+        .input-container {
+            margin: 20px 0;
+        }
+        input[type="text"] {
+            padding: 10px;
+            width: 300px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            font-size: 16px;
+        }
+        button {
+            padding: 10px 20px;
+            margin-left: 10px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+        button:hover {
+            background-color: #45a049;
+        }
+        .mic-button {
+            background-color: #2196F3;
+        }
+        .mic-button:hover {
+            background-color: #1976D2;
+        }
+        .result {
+            display: inline-block;
+            background: white;
+            padding: 10px;
+            margin: 15px;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+        }
+        img {
+            width: 200px;
+            border-radius: 8px;
+        }
     </style>
 </head>
 <body>
     <h1>🎉 SentimentSearch Web</h1>
-    <input type="text" id="query" placeholder="Type your query here..." size="50">
-    <button onclick="sendQuery()">Search</button>
+
+    <div class="input-container">
+        <input type="text" id="query" placeholder="Type or speak your query...">
+        <button onclick="sendQuery()">Search</button>
+        <button class="mic-button" onclick="startListening()">🎤 Speak</button>
+    </div>
 
     <h2>Results:</h2>
     <div id="results"></div>
 
     <script>
         function sendQuery() {
-            const query = document.getElementById("query").value;
+            const query = document.getElementById("query").value.trim();
+            if (!query) {
+                alert("Please enter or speak a query first!");
+                return;
+            }
             fetch('/process_query', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
@@ -26,18 +82,41 @@
             })
             .then(response => response.json())
             .then(data => {
-                console.log("data", data);
                 const resultsDiv = document.getElementById("results");
                 resultsDiv.innerHTML = "";
+                if (data.results.length === 0) {
+                    resultsDiv.innerHTML = "<p>No matching images found.</p>";
+                    return;
+                }
                 data.results.forEach(img => {
                     resultsDiv.innerHTML += `
                         <div class="result">
                             <img src="${img.image_url}" alt="Image">
-                            <p>${img.dominant} (${img.score.toFixed(2)})</p>
+                            <p><strong>${img.dominant}</strong> (${img.score.toFixed(2)})</p>
                         </div>
                     `;
                 });
             });
+        }
+
+        function startListening() {
+            if (!('webkitSpeechRecognition' in window)) {
+                alert("Sorry, your browser doesn't support speech recognition.");
+                return;
+            }
+            const recognition = new webkitSpeechRecognition();
+            recognition.lang = "en-US";
+            recognition.start();
+
+            recognition.onresult = function(event) {
+                const transcript = event.results[0][0].transcript;
+                document.getElementById("query").value = transcript;
+                sendQuery();
+            };
+
+            recognition.onerror = function(event) {
+                alert("Speech recognition error: " + event.error);
+            };
         }
     </script>
 </body>
