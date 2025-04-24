@@ -9,6 +9,7 @@ from deepface import DeepFace
 import json
 import cv2
 import threading
+import spacy
 from geopy.geocoders import Nominatim
 from util import complex_emotion_map
 
@@ -68,6 +69,13 @@ def extract_query_info(text):
         elif compound <= -0.3:
             detected_emotion = "sad"
 
+    location = None
+    doc = nlp(text)
+    for ent in doc.ents:
+        if ent.label_ in ("GPE", "LOC", "FAC"): 
+            location = ent.text
+            break
+
     months = [
         "january", "february", "march", "april", "may", "june",
         "july", "august", "september", "october", "november", "december"
@@ -90,7 +98,7 @@ def extract_query_info(text):
                 top_n = word_to_number(word)
                 break
 
-    return detected_emotion, found_month, found_year, top_n
+    return detected_emotion, found_month, found_year, top_n, location
 
 def word_to_number(word):
     number_words = {
@@ -152,7 +160,7 @@ def get_image_location(image_path):
                 geolocator = Nominatim(user_agent="sentiment-search")
                 location = geolocator.reverse(str(lat)+","+str(lon))
 
-                return location.address if location else None
+                return location.address.lower() if location else None
                 
     except Exception as e:
         debug_print(f"⚠️ Could not get location from {image_path}: {e}")
@@ -226,7 +234,7 @@ def show_images(image_results):
         img = cv2.resize(img, new_dims)
 
         label = f"{os.path.basename(r['path'])} ({r['dominant']} - {r['score']:.2f})"
-        # cv2.imshow(label, img)
+        cv2.imshow(label, img)
         cv2.waitKey(0)
     cv2.destroyAllWindows()
 
@@ -234,8 +242,11 @@ def show_images(image_results):
 def process_logic(text):
     print("\n📝 You said:", text)
 
-    detected_emotion, month, year, top_n = extract_query_info(text)
+    detected_emotion, month, year, top_n, location = extract_query_info(text)
     debug_print(f"😄 Emotion Detected: {detected_emotion}")
+
+    if location:
+        debug_print(f"📍 Location detected: {location}")
 
     if month and year:
         debug_print(f"📆 Timeframe detected: {month.title()} {year}")
@@ -264,10 +275,11 @@ def process_logic(text):
 
     folder = "static/images_v2"
     debug_print("\n✅ Ready to search for matching photos...\n")
-    filter_images_by_location(folder,"Seoul")
-    filtered_images = filter_images_by_date(folder, month, year)
+    location_filter = filter_images_by_location(folder,location)
+    date_filter = filter_images_by_date(folder, month, year)
+    filtered_images = list(set(location_filter) & set(date_filter))
 
-    debug_print(f"\n📂 Found {len(filtered_images)} images from {month.title()} {year}:")
+    debug_print(f"\n📂 Found {len(filtered_images)} images from {month.title()} {year} in {location}:")
     for f in filtered_images:
         debug_print(" -", f)
 
@@ -288,9 +300,10 @@ def process_logic(text):
 if __name__ == '__main__':
     print("🎉 Welcome to SentimentSearch!")
     print("🎤 Please wait for the prompt, then speak your query.")
-    print("💬 Try something like: 'Show me the top 4 not negative pictures from February of 2025'\n")
+    print("💬 Try something like: 'Show me the top 4 not negative pictures from March of 2025 in Paris'\n")
 
     recorder = AudioToTextRecorder()
+    nlp = spacy.load("en_core_web_sm")
 
     while True:
         done_event = threading.Event()
