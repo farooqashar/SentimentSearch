@@ -1,9 +1,14 @@
 const sendQuery = () => {
     const query = document.getElementById("query").value.trim();
+    const searchBtn = document.querySelector(".search-button");
     if (!query) {
         alert("Please enter or speak a query first!");
         return;
     }
+
+    searchBtn.disabled = true;
+    searchBtn.innerText = "Searching...";
+
     saveQueryToHistory(query);
 
     fetch('/process_query', {
@@ -19,6 +24,7 @@ const sendQuery = () => {
             resultsDiv.innerHTML = "<p>No matching images found.</p>";
             return;
         }
+        alert("Search completed!");
         data.results.forEach(img => {
             resultsDiv.innerHTML += `
                 <div class="result">
@@ -28,6 +34,12 @@ const sendQuery = () => {
                 </div>
             `;
         });
+    })
+    .catch(err=>{
+        alert("something went wrong while searching.")
+    }).finally(()=>{
+        searchBtn.disabled = false;
+        searchBtn.innerText = "Search";
     });
 }
 
@@ -36,14 +48,24 @@ const startListening = () => {
         alert("Sorry, your browser doesn't support speech recognition.");
         return;
     }
+    const micButton = document.querySelector('.mic-button');
     const recognition = new webkitSpeechRecognition();
     recognition.lang = "en-US";
     recognition.start();
+
+    micButton.classList.add('listening');
+    recognition.onstart = function () {
+        micButton.classList.add('listening');
+    };
 
     recognition.onresult = function(event) {
         const transcript = event.results[0][0].transcript;
         document.getElementById("query").value = transcript;
         sendQuery();
+    };
+    
+    recognition.onend = function () {
+        micButton.classList.remove('listening');
     };
 
     recognition.onerror = function(event) {

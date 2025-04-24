@@ -36,6 +36,9 @@ button:hover {
 .mic-button:hover {
     background-color: #1976D2;
 }
+.mic-button.listening {
+    background-color: #4CAF50;
+}
 .tabs button {
     background-color: #e0e0e0;
     color: #333;
