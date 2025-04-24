@@ -140,4 +140,51 @@ const showTab = (tabName) => {
     if (tabName === 'history') showHistory();
 }
 
+function openCameraModal() {
+    const modal = document.getElementById("cameraModal");
+    const video = document.getElementById("video");
+
+    navigator.mediaDevices.getUserMedia({ video: true })
+        .then(stream => {
+            videoStream = stream;
+            video.srcObject = stream;
+            modal.style.display = "flex";
+        })
+        .catch(err => alert("Cannot access camera: " + err));
+}
+
+function closeCameraModal() {
+    const modal = document.getElementById("cameraModal");
+    modal.style.display = "none";
+    if (videoStream) {
+        videoStream.getTracks().forEach(track => track.stop());
+    }
+}
+
+function capturePhoto() {
+    const video = document.getElementById("video");
+    const canvas = document.createElement("canvas");
+    canvas.width = video.videoWidth;
+    canvas.height = video.videoHeight;
+    const ctx = canvas.getContext("2d");
+    ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+
+    canvas.toBlob(blob => {
+        const formData = new FormData();
+        formData.append("image", blob, "face_template.jpg");
+
+        fetch("/upload_face_template", {
+            method: "POST",
+            body: formData
+        })
+        .then(res => res.json())
+        .then(data => {
+            alert("Face saved successfully!");
+            closeCameraModal();
+        })
+        .catch(() => alert("Upload failed."));
+    }, "image/jpeg");
+}
+
+
 showTab('results');
