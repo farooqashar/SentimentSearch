@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>SentimentSearch Web</title>
+    <style>
+        img { width: 200px; margin: 10px; border-radius: 8px; box-shadow: 0 2px 6px rgba(0,0,0,0.2); }
+        .result { display: inline-block; text-align: center; margin: 15px; }
+    </style>
+</head>
+<body>
+    <h1>🎉 SentimentSearch Web</h1>
+    <input type="text" id="query" placeholder="Type your query here..." size="50">
+    <button onclick="sendQuery()">Search</button>
+
+    <h2>Results:</h2>
+    <div id="results"></div>
+
+    <script>
+        function sendQuery() {
+            const query = document.getElementById("query").value;
+            fetch('/process_query', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ query })
+            })
+            .then(response => response.json())
+            .then(data => {
+                console.log("data", data);
+                const resultsDiv = document.getElementById("results");
+                resultsDiv.innerHTML = "";
+                data.results.forEach(img => {
+                    resultsDiv.innerHTML += `
+                        <div class="result">
+                            <img src="${img.image_url}" alt="Image">
+                            <p>${img.dominant} (${img.score.toFixed(2)})</p>
+                        </div>
+                    `;
+                });
+            });
+        }
+    </script>
+</body>
+</html>

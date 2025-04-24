@@ -211,7 +211,7 @@ def process_logic(text):
     }
     log_prediction("speech_to_text", text, predicted_speech_to_text, expected_speech_to_text)
 
-    folder = "images_v2"
+    folder = "static/images_v2"
     debug_print("\n✅ Ready to search for matching photos...\n")
     filtered_images = filter_images_by_date(folder, month, year)
 

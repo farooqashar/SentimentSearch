@@ -269,7 +269,7 @@ def process_logic(text):
 
     print("\n✅ Ready to search for matching photos based on sentiment and timeframe...\n")
 
-    folder = "images"
+    folder = "static/images"
     filtered_images = filter_images_by_date(folder, month, year)
 
     print(f"\n📂 Found {len(filtered_images)} images from {month.title()} {year}:")
