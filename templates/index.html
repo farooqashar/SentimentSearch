@@ -14,8 +14,15 @@
         <button class="mic-button" onclick="startListening()">🎤 Speak</button>
     </div>
 
-    <h2>Results:</h2>
-    <div id="results"></div>
+    <div class="tabs">
+        <button onclick="showTab('results')">Results</button>
+        <button onclick="showTab('favorites')">Favorites</button>
+        <button onclick="showTab('history')">History</button>
+    </div>
+
+    <div id="results" class="tab-content"></div>
+    <div id="favorites" class="tab-content" style="display:none;"></div>
+    <div id="history" class="tab-content" style="display:none;"></div>
 
     <script src="{{ url_for('static', filename='js/script.js') }}"></script>
 </body>

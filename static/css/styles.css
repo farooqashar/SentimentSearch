@@ -19,7 +19,7 @@ input[type="text"] {
 }
 button {
     padding: 10px 20px;
-    margin-left: 10px;
+    margin: 5px;
     background-color: #4CAF50;
     color: white;
     border: none;
@@ -35,6 +35,16 @@ button:hover {
 }
 .mic-button:hover {
     background-color: #1976D2;
+}
+.tabs button {
+    background-color: #e0e0e0;
+    color: #333;
+}
+.tabs button:hover {
+    background-color: #d5d5d5;
+}
+.tab-content {
+    margin-top: 20px;
 }
 .result {
     display: inline-block;

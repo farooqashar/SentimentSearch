@@ -1,9 +1,11 @@
-function sendQuery() {
+const sendQuery = () => {
     const query = document.getElementById("query").value.trim();
     if (!query) {
         alert("Please enter or speak a query first!");
         return;
     }
+    saveQueryToHistory(query);
+
     fetch('/process_query', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -22,13 +24,14 @@ function sendQuery() {
                 <div class="result">
                     <img src="${img.image_url}" alt="Image">
                     <p><strong>${img.dominant}</strong> (${img.score.toFixed(2)})</p>
+                    <button onclick="addToFavorites('${img.image_url}', '${img.dominant}', ${img.score})">⭐ Favorite</button>
                 </div>
             `;
         });
     });
 }
 
-function startListening() {
+const startListening = () => {
     if (!('webkitSpeechRecognition' in window)) {
         alert("Sorry, your browser doesn't support speech recognition.");
         return;
@@ -47,3 +50,72 @@ function startListening() {
         alert("Speech recognition error: " + event.error);
     };
 }
+
+const addToFavorites = (url, emotion, score) => {
+    let favorites = JSON.parse(localStorage.getItem("favorites") || "[]");
+    favorites.push({ url, emotion, score });
+    localStorage.setItem("favorites", JSON.stringify(favorites));
+    alert("Added to favorites!");
+    showFavorites();
+}
+
+const saveQueryToHistory = (query) => {
+    let history = JSON.parse(localStorage.getItem("history") || "[]");
+    history.push({ query: query, time: new Date().toLocaleString() });
+    localStorage.setItem("history", JSON.stringify(history));
+    showHistory();
+}
+
+const showFavorites = () => {
+    const favDiv = document.getElementById("favorites");
+    let favorites = JSON.parse(localStorage.getItem("favorites") || "[]");
+
+
+    favDiv.innerHTML = "<h3>Your Favorites</h3>";
+    if (favorites.length === 0) {
+        favDiv.innerHTML += "<p>No favorites yet.</p>";
+        return;
+    }
+
+    favorites.forEach(img => {
+        favDiv.innerHTML += `
+            <div class="result">
+                <img src="${img.url}" alt="Favorite">
+                <p><strong>${img.emotion}</strong> (${img.score.toFixed(2)})</p>
+            </div>
+        `;
+    });
+}
+
+
+const showHistory = () => {
+    const histDiv = document.getElementById("history");
+    let history = JSON.parse(localStorage.getItem("history") || "[]");
+    histDiv.innerHTML = "<h3>Query History</h3>";
+    if (history.length === 0) {
+        histDiv.innerHTML += "<p>No past queries.</p>";
+        return;
+    }
+    history.forEach(item => {
+        histDiv.innerHTML += `<p onclick="repeatQuery('${item.query}')">🕑 ${item.query} <small>(${item.time})</small></p>`;
+    });
+}
+
+const repeatQuery = (query) => {
+    document.getElementById("query").value = query;
+    sendQuery();
+    showTab('results');
+}
+
+const showTab = (tabName) => {
+    document.getElementById("results").style.display = "none";
+    document.getElementById("favorites").style.display = "none";
+    document.getElementById("history").style.display = "none";
+
+    document.getElementById(tabName).style.display = "block";
+
+    if (tabName === 'favorites') showFavorites();
+    if (tabName === 'history') showHistory();
+}
+
+showTab('results');
