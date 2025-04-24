@@ -1,5 +1,6 @@
 from flask import Flask, request, jsonify, render_template
-from sentiment_search import extract_query_info, filter_images_by_date, filter_images_by_emotion
+# from sentiment_search import extract_query_info, filter_images_by_date, filter_images_by_emotion, filter_images_by_location
+from sentiment_search_v2 import extract_query_info, filter_images_by_date, filter_images_by_emotion, filter_images_by_location
 
 app = Flask(__name__)
 
@@ -12,9 +13,11 @@ def process_query():
     data = request.json
     text = data.get("query")
 
-    emotion_category, month, year, top_n = extract_query_info(text)
-    folder = "static/images"
-    filtered_images = filter_images_by_date(folder, month, year)
+    emotion_category, month, year, top_n, location = extract_query_info(text)
+    folder = "static/images_v2"
+    location_filter = filter_images_by_location(folder,location)
+    date_filter = filter_images_by_date(folder, month, year)
+    filtered_images = list(set(location_filter) & set(date_filter))
     top_emotion_results = filter_images_by_emotion(filtered_images, emotion_category, top_n)
 
     results = [{

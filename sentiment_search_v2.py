@@ -70,6 +70,7 @@ def extract_query_info(text):
             detected_emotion = "sad"
 
     location = None
+    nlp = spacy.load("en_core_web_sm")
     doc = nlp(text)
     for ent in doc.ents:
         if ent.label_ in ("GPE", "LOC", "FAC"): 
@@ -303,7 +304,6 @@ if __name__ == '__main__':
     print("💬 Try something like: 'Show me the top 4 not negative pictures from March of 2025 in Paris'\n")
 
     recorder = AudioToTextRecorder()
-    nlp = spacy.load("en_core_web_sm")
 
     while True:
         done_event = threading.Event()
