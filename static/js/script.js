@@ -141,6 +141,18 @@ const showTab = (tabName) => {
 
     document.getElementById(tabName).style.display = "block";
 
+    document.querySelectorAll(".tabs button").forEach(btn => {
+        btn.classList.remove("active-tab");
+    });
+    const tabMap = {
+        results: 0,
+        favorites: 1,
+        history: 2,
+        photos: 3
+    };
+    document.querySelectorAll(".tabs button")[tabMap[tabName]].classList.add("active-tab");
+
+
     if (tabName === 'favorites') showFavorites();
     if (tabName === 'history') showHistory();
     if (tabName === 'photos') showPhotos();
@@ -255,10 +267,10 @@ function handleUpload(event) {
         localStorage.setItem("uploaded", JSON.stringify(uploadedPhotos));
         alert("Photo uploaded successfully!");
 
-        showPhotos(); 
+        showPhotos();
     };
 
-    reader.readAsDataURL(file); 
+    reader.readAsDataURL(file);
 }
 
 showTab('results');
