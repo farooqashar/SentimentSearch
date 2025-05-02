@@ -257,7 +257,7 @@ function handleUpload(event) {
         const uploadedPhotos = JSON.parse(localStorage.getItem("uploaded") || "[]");
         uploadedPhotos.push({url: e.target.result })
         localStorage.setItem("uploaded", JSON.stringify(uploadedPhotos));
-        alert("Photo uploaded successfully!");
+        showToast("Photo uploaded successfully!");
 
         showPhotos(); 
     };
@@ -279,9 +279,9 @@ const userEvaluate = (url, expected_emotion, met_expectation) => {
     })
     .then(res => res.json())
     .then(data => {
-        alert("Feedback recorded. Thank you!");
+        showToast("Feedback recorded. Thank you!");
     })
-    .catch(() => alert("Failed to submit feedback."));
+    .catch(() => showToast("Failed to submit feedback."));
 };
 
 showTab('results');
