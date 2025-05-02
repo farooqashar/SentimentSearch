@@ -4,3 +4,4 @@ vaderSentiment
 deepface
 spacy
 geopy
+tf-keras
