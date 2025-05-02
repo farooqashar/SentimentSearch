@@ -1,52 +1,77 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
+  <head>
+    <meta charset="UTF-8" />
     <title>SentimentSearch Web</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
-</head>
-<body>
-    <div id="introModal" class="modal" style="display:none;">
+    <link
+      rel="stylesheet"
+      href="{{ url_for('static', filename='css/styles.css') }}"
+    />
+  </head>
+  <body>
+    <div class="container">
+      <div id="introModal" class="modal" style="display: none">
         <div class="modal-content">
           <h2>👋 Welcome to SentimentSearch!</h2>
-          <p>This tool helps you search your photos using voice and emotion-based filtering.</p>
+          <p>
+            This tool helps you search your photos using voice and emotion-based
+            filtering.
+          </p>
           <ul>
-              <li>🎤 Click the mic to speak your query (e.g., "Show me 5 photos from Paris in 2022").</li>
-              <li>📸 Use the camera button to take a photo of your current expression as a search filter.</li>
-              <li>💾 Your queries and favorites are saved for easy access!</li>
+            <li>
+              🎤 Click the mic to speak your query (e.g., "Show me 5 photos from
+              Paris in 2022").
+            </li>
+            <li>
+              📸 Use the camera button to take a photo of your current
+              expression as a search filter.
+            </li>
+            <li>💾 Your queries and favorites are saved for easy access!</li>
           </ul>
           <button onclick="closeIntroModal()">Got it!</button>
         </div>
-    </div>
+      </div>
 
-    <h1>🎉 SentimentSearch Web</h1>
+      <h1>🎉 SentimentSearch Web</h1>
 
-    <div class="input-container">
-        <input type="text" id="query" placeholder="Type or speak your query...">
+      <div class="input-container">
+        <input
+          type="text"
+          id="query"
+          placeholder="Type or speak your query..."
+        />
         <button class="search-button" onclick="sendQuery()">Search</button>
         <button class="mic-button" onclick="startListening()">🎤 Speak</button>
-        <button class="camera-button" onclick="openCameraModal()">📸 Capture my face</button>
-    </div>
+        <button class="camera-button" onclick="openCameraModal()">
+          📸 Capture my face
+        </button>
+      </div>
 
-    <div id="cameraModal" class="modal" style="display:none;">
+      <div id="cameraModal" class="modal" style="display: none">
         <div class="modal-content">
           <video id="video" autoplay playsinline></video>
-          <br>
+          <br />
           <button onclick="capturePhoto()">📷 Capture</button>
           <button onclick="closeCameraModal()">❌ Cancel</button>
         </div>
       </div>
-      
-    <div class="tabs">
+
+      <div class="tabs">
         <button onclick="showTab('results')">Results</button>
         <button onclick="showTab('favorites')">Favorites</button>
         <button onclick="showTab('history')">History</button>
+        <button onclick="showTab('photos')">Uploaded Photos</button>
+      </div>
+
+      <div id="results" class="tab-content"></div>
+      <div id="favorites" class="tab-content" style="display: none"></div>
+      <div id="history" class="tab-content" style="display: none"></div>
+      <div id="photos" class="tab-content" style="display: none"></div>
+
+      <!-- Toast notification -->
+      <div id="toast" class="toast hidden"></div>
+
+      <script src="{{ url_for('static', filename='js/script.js') }}"></script>
     </div>
-
-    <div id="results" class="tab-content"></div>
-    <div id="favorites" class="tab-content" style="display:none;"></div>
-    <div id="history" class="tab-content" style="display:none;"></div>
-
-    <script src="{{ url_for('static', filename='js/script.js') }}"></script>
-</body>
+  </body>
 </html>

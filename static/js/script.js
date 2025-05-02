@@ -2,7 +2,7 @@ const sendQuery = () => {
     const query = document.getElementById("query").value.trim();
     const searchBtn = document.querySelector(".search-button");
     if (!query) {
-        alert("Please enter or speak a query first!");
+        showToast("Please enter or speak a query first!");
         return;
     }
 
@@ -11,32 +11,40 @@ const sendQuery = () => {
 
     saveQueryToHistory(query);
 
+    let uploaded = JSON.parse(localStorage.getItem("uploaded") || "[]");
+
+    console.log("photos: ",  photos);
+
     fetch('/process_query', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ query })
+        body: JSON.stringify({ query, uploaded })
     })
     .then(response => response.json())
     .then(data => {
         const resultsDiv = document.getElementById("results");
+        const emotion = data.emotion;
         resultsDiv.innerHTML = "";
         if (data.results.length === 0) {
             resultsDiv.innerHTML = "<p>No matching images found.</p>";
             return;
         }
-        alert("Search completed!");
+        
+        showToast("Search completed!");
         data.results.forEach(img => {
             resultsDiv.innerHTML += `
                 <div class="result">
                     <img src="${img.image_url}" alt="Image">
-                    <p><strong>${img.dominant}</strong> (${img.score.toFixed(2)})</p>
+                    <br>
                     <button onclick="addToFavorites('${img.image_url}', '${img.dominant}', ${img.score})">⭐ Favorite</button>
+                    <p>Does this image match your expectation?</p>
+                    <button class="upvote" onclick="userEvaluate('${img.image_url}','${emotion}',true)">👍</button><button class="downvote" onclick="userEvaluate('${img.image_url}','${emotion}',false)">👎</button>
                 </div>
             `;
         });
     })
     .catch(err=>{
-        alert("something went wrong while searching.")
+        showToast("something went wrong while searching.")
     }).finally(()=>{
         searchBtn.disabled = false;
         searchBtn.innerText = "Search";
@@ -45,7 +53,7 @@ const sendQuery = () => {
 
 const startListening = () => {
     if (!('webkitSpeechRecognition' in window)) {
-        alert("Sorry, your browser doesn't support speech recognition.");
+        showToast("Sorry, your browser doesn't support speech recognition.");
         return;
     }
     const micButton = document.querySelector('.mic-button');
@@ -63,13 +71,13 @@ const startListening = () => {
         document.getElementById("query").value = transcript;
         sendQuery();
     };
-    
+
     recognition.onend = function () {
         micButton.classList.remove('listening');
     };
 
     recognition.onerror = function(event) {
-        alert("Speech recognition error: " + event.error);
+        showToast("Speech recognition error: " + event.error);
     };
 }
 
@@ -77,7 +85,7 @@ const addToFavorites = (url, emotion, score) => {
     let favorites = JSON.parse(localStorage.getItem("favorites") || "[]");
     favorites.push({ url, emotion, score });
     localStorage.setItem("favorites", JSON.stringify(favorites));
-    alert("Added to favorites!");
+    showToast("Added to favorites!");
     showFavorites();
 }
 
@@ -103,7 +111,7 @@ const showFavorites = () => {
         favDiv.innerHTML += `
             <div class="result">
                 <img src="${img.url}" alt="Favorite">
-                <p><strong>${img.emotion}</strong> (${img.score.toFixed(2)})</p>
+                <br>
             </div>
         `;
     });
@@ -133,11 +141,25 @@ const showTab = (tabName) => {
     document.getElementById("results").style.display = "none";
     document.getElementById("favorites").style.display = "none";
     document.getElementById("history").style.display = "none";
+    document.getElementById("photos").style.display = "none";
 
     document.getElementById(tabName).style.display = "block";
 
+    document.querySelectorAll(".tabs button").forEach(btn => {
+        btn.classList.remove("active-tab");
+    });
+    const tabMap = {
+        results: 0,
+        favorites: 1,
+        history: 2,
+        photos: 3
+    };
+    document.querySelectorAll(".tabs button")[tabMap[tabName]].classList.add("active-tab");
+
+
     if (tabName === 'favorites') showFavorites();
     if (tabName === 'history') showHistory();
+    if (tabName === 'photos') showPhotos();
 }
 
 function openCameraModal() {
@@ -150,7 +172,7 @@ function openCameraModal() {
             video.srcObject = stream;
             modal.style.display = "flex";
         })
-        .catch(err => alert("Cannot access camera: " + err));
+        .catch(err => showToast("Cannot access camera: " + err));
 }
 
 function closeCameraModal() {
@@ -179,10 +201,10 @@ function capturePhoto() {
         })
         .then(res => res.json())
         .then(data => {
-            alert("Face saved successfully!");
+            showToast("Face saved successfully!");
             closeCameraModal();
         })
-        .catch(() => alert("Upload failed."));
+        .catch(() => showToast("Upload failed."));
     }, "image/jpeg");
 }
 
@@ -191,10 +213,87 @@ function closeIntroModal() {
     localStorage.setItem("seenIntro", "true");
 }
 
+const showToast = (message, duration = 3000) => {
+    const toast = document.getElementById("toast");
+    toast.innerText = message;
+    toast.classList.remove("hidden");
+    toast.classList.add("show");
+
+    setTimeout(() => {
+        toast.classList.remove("show");
+        toast.classList.add("hidden");
+    }, duration);
+}
+
 window.onload = function() {
     if (!localStorage.getItem("seenIntro")) {
         document.getElementById("introModal").style.display = "block";
     }
+};
+
+const showPhotos = () => {
+    const photoDiv = document.getElementById("photos");
+    let Photos = JSON.parse(localStorage.getItem("uploaded") || "[]");
+
+    photoDiv.innerHTML = `
+        <div>
+            <h3>Your Photos</h3>
+            <button onclick="document.getElementById('uploadInput').click()">Upload</button>
+            <input type="file" id="uploadInput" accept="image/*" style="display:none" onchange="handleUpload(event)">
+        </div>
+    `;
+
+    if (Photos.length === 0) {
+        photoDiv.innerHTML += "<p>No Photos yet.</p>";
+        return;
+    }
+
+    Photos.forEach(img => {
+        photoDiv.innerHTML += `
+            <div class="result">
+                <img src="${img.url}" alt="photo">
+            </div>
+        `;
+    });
+}
+
+
+function handleUpload(event) {
+    const file = event.target.files[0];
+    if (!file) return;
+
+    const reader = new FileReader();
+    reader.onload = function (e) {
+        const imageUrl = e.target.result;
+
+        const uploadedPhotos = JSON.parse(localStorage.getItem("uploaded") || "[]");
+        uploadedPhotos.push({url: e.target.result })
+        localStorage.setItem("uploaded", JSON.stringify(uploadedPhotos));
+        showToast("Photo uploaded successfully!");
+
+        showPhotos();
+    };
+
+    reader.readAsDataURL(file);
+}
+
+const userEvaluate = (url, expected_emotion, met_expectation) => {
+    fetch("/evaluate_result", {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json"
+        },
+        body: JSON.stringify({
+            url: url,
+            expected_emotion: expected_emotion,
+            met_expectation: met_expectation
+        })
+    })
+    .then(res => res.json())
+    .then(data => {
+        showToast("Feedback recorded. Thank you!");
+    })
+    .catch(() => showToast("Failed to submit feedback."));
 };
 
 showTab('results');

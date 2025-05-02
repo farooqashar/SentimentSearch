@@ -122,7 +122,7 @@ def get_image_date(image_path):
         debug_print(f"⚠️ Could not get date from {image_path}: {e}")
     return None
 
-def filter_images_by_date(folder, target_month, target_year):
+def filter_images_by_date(folder, target_month=None, target_year=None):
     matching_images = []
     for fname in os.listdir(folder):
         if not fname.lower().endswith((".jpg", ".jpeg", ".png")):
@@ -130,13 +130,18 @@ def filter_images_by_date(folder, target_month, target_year):
 
         path = os.path.join(folder, fname)
         date = get_image_date(path)
+
         if date:
-            if (date.strftime('%B').lower() == target_month.lower() and date.year == target_year):
+            match_month = (target_month is None or date.strftime('%B').lower() == target_month.lower())
+            match_year = (target_year is None or date.year == target_year)
+
+            if match_month and match_year:
                 matching_images.append(path)
         else:
             matching_images.append(path)
 
     return matching_images
+
 
 def dms_to_decimal(dms, ref):
     degrees, minutes, seconds = dms
