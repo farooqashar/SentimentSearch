@@ -3,7 +3,7 @@ import io
 import shutil
 import uuid
 from PIL import Image
-from flask import Flask, request, jsonify, render_template
+from flask import Flask, request, jsonify, render_template,json 
 import os
 from deepface import DeepFace
 # from sentiment_search import extract_query_info, filter_images_by_date, filter_images_by_emotion, filter_images_by_location (V1)
@@ -11,6 +11,7 @@ from sentiment_search_v2 import extract_query_info, filter_images_by_date, filte
 
 app = Flask(__name__)
 UPLOAD_CACHE_FOLDER = "static/user_upload_cache"
+EVAL_LOG = "user_evaluation.jsonl"
 os.makedirs(UPLOAD_CACHE_FOLDER, exist_ok=True)
 
 @app.route('/')
@@ -103,6 +104,24 @@ def upload_face_template():
     file_path = os.path.join(UPLOAD_FOLDER, "face_template.jpg")
     file.save(file_path)
     return jsonify({"status": "success", "saved_to": file_path})
+
+@app.route("/evaluate_result", methods=["POST"])
+def evaluate_result():
+    data = request.get_json()
+    url = data.get("url")
+    expected_emotion = data.get("expected_emotion")
+    met = data.get("met_expectation")
+
+    log_entry = {
+        "url": url,
+        "expected_emotion": expected_emotion,
+        "met_expectation": met
+    }
+
+    with open(EVAL_LOG, "a") as f:
+        f.write(json.dumps(log_entry) + "\n")
+
+    return jsonify({"status": "ok"})
 
 if __name__ == "__main__":
     app.run(debug=True)

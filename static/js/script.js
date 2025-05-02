@@ -23,18 +23,22 @@ const sendQuery = () => {
     .then(response => response.json())
     .then(data => {
         const resultsDiv = document.getElementById("results");
+        const emotion = data.emotion;
         resultsDiv.innerHTML = "";
         if (data.results.length === 0) {
             resultsDiv.innerHTML = "<p>No matching images found.</p>";
             return;
         }
+        
         showToast("Search completed!");
         data.results.forEach(img => {
             resultsDiv.innerHTML += `
                 <div class="result">
                     <img src="${img.image_url}" alt="Image">
-                    <p><strong>${img.dominant}</strong> (${img.score.toFixed(2)})</p>
+                    <br>
                     <button onclick="addToFavorites('${img.image_url}', '${img.dominant}', ${img.score})">⭐ Favorite</button>
+                    <p>Does this image match your expectation?</p>
+                    <button class="upvote" onclick="userEvaluate('${img.image_url}','${emotion}',true)">👍</button><button class="downvote" onclick="userEvaluate('${img.image_url}','${emotion}',false)">👎</button>
                 </div>
             `;
         });
@@ -107,7 +111,7 @@ const showFavorites = () => {
         favDiv.innerHTML += `
             <div class="result">
                 <img src="${img.url}" alt="Favorite">
-                <p><strong>${img.emotion}</strong> (${img.score.toFixed(2)})</p>
+                <br>
             </div>
         `;
     });
@@ -265,12 +269,31 @@ function handleUpload(event) {
         const uploadedPhotos = JSON.parse(localStorage.getItem("uploaded") || "[]");
         uploadedPhotos.push({url: e.target.result })
         localStorage.setItem("uploaded", JSON.stringify(uploadedPhotos));
-        alert("Photo uploaded successfully!");
+        showToast("Photo uploaded successfully!");
 
         showPhotos();
     };
 
     reader.readAsDataURL(file);
 }
+
+const userEvaluate = (url, expected_emotion, met_expectation) => {
+    fetch("/evaluate_result", {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json"
+        },
+        body: JSON.stringify({
+            url: url,
+            expected_emotion: expected_emotion,
+            met_expectation: met_expectation
+        })
+    })
+    .then(res => res.json())
+    .then(data => {
+        showToast("Feedback recorded. Thank you!");
+    })
+    .catch(() => showToast("Failed to submit feedback."));
+};
 
 showTab('results');

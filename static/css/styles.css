@@ -20,7 +20,7 @@ input[type="text"] {
 button {
     padding: 10px 20px;
     margin: 5px;
-    background-color: #4CAF50;
+    background-color: #2196F3;
     color: white;
     border: none;
     border-radius: 5px;
@@ -33,7 +33,7 @@ button {
 button:hover {
     transform: translateY(-2px);
     box-shadow: 0 4px 8px rgba(0,0,0,0.2);
-    background-color: #45a049;
+    background-color: #1976D2;
 }
 .mic-button {
     background-color: #2196F3;
@@ -141,6 +141,7 @@ img {
     opacity: 0;
 }
 
+
 .container {
     max-width: 960px;
     margin: 40px auto;
@@ -148,4 +149,12 @@ img {
     border-radius: 12px;
     box-shadow: 0 6px 20px rgba(0, 0, 0, 0.1);
     padding: 30px;
+}
+
+.upvote {
+    background-color : #4CAF50;
+}
+
+.downvote {
+    background : rgb(185, 59, 59);
 }
