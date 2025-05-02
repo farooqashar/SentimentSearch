@@ -11,10 +11,14 @@ const sendQuery = () => {
 
     saveQueryToHistory(query);
 
+    let uploaded = JSON.parse(localStorage.getItem("uploaded") || "[]");
+
+    console.log("photos: ",  photos);
+
     fetch('/process_query', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ query })
+        body: JSON.stringify({ query, uploaded })
     })
     .then(response => response.json())
     .then(data => {
@@ -133,11 +137,13 @@ const showTab = (tabName) => {
     document.getElementById("results").style.display = "none";
     document.getElementById("favorites").style.display = "none";
     document.getElementById("history").style.display = "none";
+    document.getElementById("photos").style.display = "none";
 
     document.getElementById(tabName).style.display = "block";
 
     if (tabName === 'favorites') showFavorites();
     if (tabName === 'history') showHistory();
+    if (tabName === 'photos') showPhotos();
 }
 
 function openCameraModal() {
@@ -208,5 +214,51 @@ window.onload = function() {
         document.getElementById("introModal").style.display = "block";
     }
 };
+
+const showPhotos = () => {
+    const photoDiv = document.getElementById("photos");
+    let Photos = JSON.parse(localStorage.getItem("uploaded") || "[]");
+
+    photoDiv.innerHTML = `
+        <div>
+            <h3>Your Photos</h3>
+            <button onclick="document.getElementById('uploadInput').click()">Upload</button>
+            <input type="file" id="uploadInput" accept="image/*" style="display:none" onchange="handleUpload(event)">
+        </div>
+    `;
+
+    if (Photos.length === 0) {
+        photoDiv.innerHTML += "<p>No Photos yet.</p>";
+        return;
+    }
+
+    Photos.forEach(img => {
+        photoDiv.innerHTML += `
+            <div class="result">
+                <img src="${img.url}" alt="photo">
+            </div>
+        `;
+    });
+}
+
+
+function handleUpload(event) {
+    const file = event.target.files[0];
+    if (!file) return;
+
+    const reader = new FileReader();
+    reader.onload = function (e) {
+        const imageUrl = e.target.result;
+
+        const uploadedPhotos = JSON.parse(localStorage.getItem("uploaded") || "[]");
+        uploadedPhotos.push({url: e.target.result })
+        localStorage.setItem("uploaded", JSON.stringify(uploadedPhotos));
+        alert("Photo uploaded successfully!");
+
+        showPhotos(); 
+    };
+
+    reader.readAsDataURL(file); 
+}
 
 showTab('results');
