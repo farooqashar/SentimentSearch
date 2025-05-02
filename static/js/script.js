@@ -1,3 +1,12 @@
+var input = document.getElementById("query");
+
+input.addEventListener("keypress", function(event) {
+  if (event.key === "Enter") {
+    event.preventDefault();
+    sendQuery();
+  }
+});
+
 const sendQuery = () => {
     const query = document.getElementById("query").value.trim();
     const searchBtn = document.querySelector(".search-button");
@@ -9,6 +18,10 @@ const sendQuery = () => {
     searchBtn.disabled = true;
     searchBtn.innerText = "Searching...";
 
+    showTab('results');
+    
+    const resultsDiv = document.getElementById("results");
+    resultsDiv.innerHTML = "<img src = 'static/loading.gif'/>";
     saveQueryToHistory(query);
 
     let uploaded = JSON.parse(localStorage.getItem("uploaded") || "[]");
@@ -20,7 +33,6 @@ const sendQuery = () => {
     })
     .then(response => response.json())
     .then(data => {
-        const resultsDiv = document.getElementById("results");
         const emotion = data.emotion;
         resultsDiv.innerHTML = "";
         if (data.results.length === 0) {
