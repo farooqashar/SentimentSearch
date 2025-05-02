@@ -5,3 +5,4 @@ deepface
 spacy
 geopy
 tf-keras
+gunicorn
