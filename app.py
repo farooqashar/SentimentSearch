@@ -6,7 +6,7 @@ from PIL import Image
 from flask import Flask, request, jsonify, render_template,json 
 import os
 from deepface import DeepFace
-# from sentiment_search import extract_query_info, filter_images_by_date, filter_images_by_emotion, filter_images_by_location
+# from sentiment_search import extract_query_info, filter_images_by_date, filter_images_by_emotion, filter_images_by_location (V1)
 from sentiment_search_v2 import extract_query_info, filter_images_by_date, filter_images_by_emotion, filter_images_by_location
 
 app = Flask(__name__)
@@ -47,7 +47,7 @@ def process_query():
             # result_image.append(img_path)
     except Exception as e:
         print("Error processing uploaded images: ", e)
-    
+
 
     emotion_category, month, year, top_n, location = extract_query_info(text)
 
