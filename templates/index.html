@@ -36,7 +36,7 @@
           <button onclick="closeCameraModal()">❌ Cancel</button>
         </div>
       </div>
-      
+
     <div class="tabs">
         <button onclick="showTab('results')">Results</button>
         <button onclick="showTab('favorites')">Favorites</button>
@@ -48,6 +48,9 @@
     <div id="favorites" class="tab-content" style="display:none;"></div>
     <div id="history" class="tab-content" style="display:none;"></div>
     <div id="photos" class="tab-content" style="display:none;"></div>
+
+    <!-- Toast notification -->
+    <div id="toast" class="toast hidden"></div>
 
     <script src="{{ url_for('static', filename='js/script.js') }}"></script>
 </body>

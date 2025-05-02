@@ -75,7 +75,7 @@ img {
     background-color: rgba(0,0,0,0.6);
     z-index: 1000;
   }
-  
+
   .modal-content {
     background: white;
     margin: 10% auto;
@@ -85,4 +85,28 @@ img {
     border-radius: 10px;
     text-align: center;
   }
-  
+
+  .toast {
+    position: fixed;
+    bottom: 30px;
+    left: 50%;
+    transform: translateX(-50%);
+    background-color: #333;
+    color: white;
+    padding: 12px 20px;
+    border-radius: 6px;
+    font-size: 16px;
+    z-index: 1000;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.5s ease;
+}
+
+.toast.show {
+    opacity: 1;
+    pointer-events: auto;
+}
+
+.toast.hidden {
+    opacity: 0;
+}
