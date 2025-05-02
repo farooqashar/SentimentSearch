@@ -13,8 +13,6 @@ const sendQuery = () => {
 
     let uploaded = JSON.parse(localStorage.getItem("uploaded") || "[]");
 
-    console.log("photos: ",  photos);
-
     fetch('/process_query', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -36,7 +34,7 @@ const sendQuery = () => {
                 <div class="result">
                     <img src="${img.image_url}" alt="Image">
                     <br>
-                    <button onclick="addToFavorites('${img.image_url}', '${img.dominant}', ${img.score})">⭐ Favorite</button>
+                    <button onclick="addToFavorites('${img.image_url}')">⭐ Favorite</button>
                     <button onclick="document.getElementById('link').click()">Download</button>
                     <a id="link" href="${img.image_url}" download hidden></a>
                     <p>Does this image match your expectation?</p>
@@ -83,11 +81,19 @@ const startListening = () => {
     };
 }
 
-const addToFavorites = (url, emotion, score) => {
+const addToFavorites = (url) => {
     let favorites = JSON.parse(localStorage.getItem("favorites") || "[]");
-    favorites.push({ url, emotion, score });
+    favorites.push({ url });
     localStorage.setItem("favorites", JSON.stringify(favorites));
     showToast("Added to favorites!");
+    showFavorites();
+}
+
+const removeFromFavorite = (url) => {
+    let favorites = JSON.parse(localStorage.getItem("favorites") || "[]");
+    favorites = favorites.filter(item => item.url !== url);
+    localStorage.setItem("favorites", JSON.stringify(favorites));
+    showToast("Removed from favorites!");
     showFavorites();
 }
 
@@ -114,6 +120,7 @@ const showFavorites = () => {
             <div class="result">
                 <img src="${img.url}" alt="Favorite">
                 <br>
+                <button onclick="removeFromFavorite('${img.url}')">💔 Favorite</button>
                 <button onclick="document.getElementById('link').click()">Download</button>
                 <a id="link" href="${img.image_url}" download hidden></a>
             </div>
