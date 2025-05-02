@@ -2,7 +2,7 @@ const sendQuery = () => {
     const query = document.getElementById("query").value.trim();
     const searchBtn = document.querySelector(".search-button");
     if (!query) {
-        alert("Please enter or speak a query first!");
+        showToast("Please enter or speak a query first!");
         return;
     }
 
@@ -24,7 +24,7 @@ const sendQuery = () => {
             resultsDiv.innerHTML = "<p>No matching images found.</p>";
             return;
         }
-        alert("Search completed!");
+        showToast("Search completed!");
         data.results.forEach(img => {
             resultsDiv.innerHTML += `
                 <div class="result">
@@ -36,7 +36,7 @@ const sendQuery = () => {
         });
     })
     .catch(err=>{
-        alert("something went wrong while searching.")
+        showToast("something went wrong while searching.")
     }).finally(()=>{
         searchBtn.disabled = false;
         searchBtn.innerText = "Search";
@@ -45,7 +45,7 @@ const sendQuery = () => {
 
 const startListening = () => {
     if (!('webkitSpeechRecognition' in window)) {
-        alert("Sorry, your browser doesn't support speech recognition.");
+        showToast("Sorry, your browser doesn't support speech recognition.");
         return;
     }
     const micButton = document.querySelector('.mic-button');
@@ -63,13 +63,13 @@ const startListening = () => {
         document.getElementById("query").value = transcript;
         sendQuery();
     };
-    
+
     recognition.onend = function () {
         micButton.classList.remove('listening');
     };
 
     recognition.onerror = function(event) {
-        alert("Speech recognition error: " + event.error);
+        showToast("Speech recognition error: " + event.error);
     };
 }
 
@@ -77,7 +77,7 @@ const addToFavorites = (url, emotion, score) => {
     let favorites = JSON.parse(localStorage.getItem("favorites") || "[]");
     favorites.push({ url, emotion, score });
     localStorage.setItem("favorites", JSON.stringify(favorites));
-    alert("Added to favorites!");
+    showToast("Added to favorites!");
     showFavorites();
 }
 
@@ -150,7 +150,7 @@ function openCameraModal() {
             video.srcObject = stream;
             modal.style.display = "flex";
         })
-        .catch(err => alert("Cannot access camera: " + err));
+        .catch(err => showToast("Cannot access camera: " + err));
 }
 
 function closeCameraModal() {
@@ -179,16 +179,28 @@ function capturePhoto() {
         })
         .then(res => res.json())
         .then(data => {
-            alert("Face saved successfully!");
+            showToast("Face saved successfully!");
             closeCameraModal();
         })
-        .catch(() => alert("Upload failed."));
+        .catch(() => showToast("Upload failed."));
     }, "image/jpeg");
 }
 
 function closeIntroModal() {
     document.getElementById("introModal").style.display = "none";
     localStorage.setItem("seenIntro", "true");
+}
+
+const showToast = (message, duration = 3000) => {
+    const toast = document.getElementById("toast");
+    toast.innerText = message;
+    toast.classList.remove("hidden");
+    toast.classList.add("show");
+
+    setTimeout(() => {
+        toast.classList.remove("show");
+        toast.classList.add("hidden");
+    }, duration);
 }
 
 window.onload = function() {
