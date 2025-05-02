@@ -20,7 +20,7 @@ input[type="text"] {
 button {
     padding: 10px 20px;
     margin: 5px;
-    background-color: #4CAF50;
+    background-color: #2196F3;
     color: white;
     border: none;
     border-radius: 5px;
@@ -28,7 +28,7 @@ button {
     font-size: 16px;
 }
 button:hover {
-    background-color: #45a049;
+    background-color: #1976D2;
 }
 .mic-button {
     background-color: #2196F3;
@@ -109,4 +109,12 @@ img {
 
 .toast.hidden {
     opacity: 0;
+}
+
+.upvote {
+    background-color : #4CAF50;
+}
+
+.downvote {
+    background : rgb(185, 59, 59);
 }

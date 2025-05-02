@@ -23,11 +23,13 @@ const sendQuery = () => {
     .then(response => response.json())
     .then(data => {
         const resultsDiv = document.getElementById("results");
+        const emotion = data.emotion;
         resultsDiv.innerHTML = "";
         if (data.results.length === 0) {
             resultsDiv.innerHTML = "<p>No matching images found.</p>";
             return;
         }
+        
         showToast("Search completed!");
         data.results.forEach(img => {
             resultsDiv.innerHTML += `
@@ -35,6 +37,8 @@ const sendQuery = () => {
                     <img src="${img.image_url}" alt="Image">
                     <br>
                     <button onclick="addToFavorites('${img.image_url}', '${img.dominant}', ${img.score})">⭐ Favorite</button>
+                    <p>Does this image match your expectation?</p>
+                    <button class="upvote" onclick="userEvaluate('${img.image_url}','${emotion}',true)">👍</button><button class="downvote" onclick="userEvaluate('${img.image_url}','${emotion}',false)">👎</button>
                 </div>
             `;
         });
@@ -260,5 +264,24 @@ function handleUpload(event) {
 
     reader.readAsDataURL(file); 
 }
+
+const userEvaluate = (url, expected_emotion, met_expectation) => {
+    fetch("/evaluate_result", {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json"
+        },
+        body: JSON.stringify({
+            url: url,
+            expected_emotion: expected_emotion,
+            met_expectation: met_expectation
+        })
+    })
+    .then(res => res.json())
+    .then(data => {
+        alert("Feedback recorded. Thank you!");
+    })
+    .catch(() => alert("Failed to submit feedback."));
+};
 
 showTab('results');
