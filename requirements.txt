@@ -2,6 +2,5 @@ opencv-python
 Pillow
 vaderSentiment
 deepface
-RealtimeSTT
 spacy
 geopy

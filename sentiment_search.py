@@ -1,6 +1,5 @@
 import re
 from vaderSentiment.vaderSentiment import SentimentIntensityAnalyzer
-from RealtimeSTT import AudioToTextRecorder
 import os
 from PIL import Image
 from PIL.ExifTags import TAGS
@@ -296,33 +295,33 @@ if __name__ == '__main__':
     print("🎤 Please wait for the prompt, then speak your query.")
     print("💬 Try something like: 'Show me the top 4 not negative pictures from February of 2025'\n")
 
-    recorder = AudioToTextRecorder()
+    # recorder = AudioToTextRecorder()
 
-    while True:
-        done_event = threading.Event()
+    # while True:
+    #     done_event = threading.Event()
 
-        def wrapped_process_logic(text):
-            global total_speech_to_text_accuracy, total_image_retrieval_accuracy, num_queries
+    #     def wrapped_process_logic(text):
+    #         global total_speech_to_text_accuracy, total_image_retrieval_accuracy, num_queries
 
-            speech_acr, image_acr = process_logic(text)
+    #         speech_acr, image_acr = process_logic(text)
 
-            total_speech_to_text_accuracy += speech_acr
-            total_image_retrieval_accuracy += image_acr
-            num_queries += 1
+    #         total_speech_to_text_accuracy += speech_acr
+    #         total_image_retrieval_accuracy += image_acr
+    #         num_queries += 1
 
-            done_event.set()
+    #         done_event.set()
 
-        # Wait Until The Logic Has Been Processed Before Asking The User For Potentially Another Query
-        recorder.text(wrapped_process_logic)
-        done_event.wait()
+    #     # Wait Until The Logic Has Been Processed Before Asking The User For Potentially Another Query
+    #     recorder.text(wrapped_process_logic)
+    #     done_event.wait()
 
-        cont = input("\n🔁 Do you want to try another query? (yes/no): ").strip().lower()
-        if cont not in ["yes", "y"]:
-            if num_queries != 0:
-                avg_speech_to_text_acr = total_speech_to_text_accuracy / num_queries
-                avg_img_acr = total_image_retrieval_accuracy / num_queries
-                print(f"\n📊 Session Summary:")
-                print(f"• Average Speech To Text Parsing Accuracy: {avg_speech_to_text_acr:.2f}%")
-                print(f"• Average Image Sentiment Matching Accuracy: {avg_img_acr:.2f}%")
-                print("👋 Goodbye! Thanks for using SentimentSearch.")
-            break
+    #     cont = input("\n🔁 Do you want to try another query? (yes/no): ").strip().lower()
+    #     if cont not in ["yes", "y"]:
+    #         if num_queries != 0:
+    #             avg_speech_to_text_acr = total_speech_to_text_accuracy / num_queries
+    #             avg_img_acr = total_image_retrieval_accuracy / num_queries
+    #             print(f"\n📊 Session Summary:")
+    #             print(f"• Average Speech To Text Parsing Accuracy: {avg_speech_to_text_acr:.2f}%")
+    #             print(f"• Average Image Sentiment Matching Accuracy: {avg_img_acr:.2f}%")
+    #             print("👋 Goodbye! Thanks for using SentimentSearch.")
+    #         break

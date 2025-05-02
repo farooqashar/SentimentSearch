@@ -1,6 +1,5 @@
 import re
 from vaderSentiment.vaderSentiment import SentimentIntensityAnalyzer
-from RealtimeSTT import AudioToTextRecorder
 import os
 from PIL import Image
 from PIL.ExifTags import TAGS
@@ -73,7 +72,7 @@ def extract_query_info(text):
     nlp = spacy.load("en_core_web_sm")
     doc = nlp(text)
     for ent in doc.ents:
-        if ent.label_ in ("GPE", "LOC", "FAC"): 
+        if ent.label_ in ("GPE", "LOC", "FAC"):
             location = ent.text
             break
 
@@ -162,7 +161,7 @@ def get_image_location(image_path):
                 location = geolocator.reverse(str(lat)+","+str(lon))
 
                 return location.address.lower() if location else None
-                
+
     except Exception as e:
         debug_print(f"⚠️ Could not get location from {image_path}: {e}")
     return None
@@ -305,19 +304,19 @@ if __name__ == '__main__':
     print("🎤 Please wait for the prompt, then speak your query.")
     print("💬 Try something like: 'Show me the top 4 not negative pictures from March of 2025 in Paris'\n")
 
-    recorder = AudioToTextRecorder()
+    # recorder = AudioToTextRecorder()
 
-    while True:
-        done_event = threading.Event()
+    # while True:
+    #     done_event = threading.Event()
 
-        def wrapped_process_logic(text):
-            process_logic(text)
-            done_event.set()
+    #     def wrapped_process_logic(text):
+    #         process_logic(text)
+    #         done_event.set()
 
-        recorder.text(wrapped_process_logic)
-        done_event.wait()
+    #     recorder.text(wrapped_process_logic)
+    #     done_event.wait()
 
-        cont = input("\n🔁 Do you want to try another query? (yes/no): ").strip().lower()
-        if cont not in ["yes", "y"]:
-            print("👋 Goodbye! Thanks for using SentimentSearch.")
-            break
+    #     cont = input("\n🔁 Do you want to try another query? (yes/no): ").strip().lower()
+    #     if cont not in ["yes", "y"]:
+    #         print("👋 Goodbye! Thanks for using SentimentSearch.")
+    #         break
