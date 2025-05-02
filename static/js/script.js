@@ -37,6 +37,8 @@ const sendQuery = () => {
                     <img src="${img.image_url}" alt="Image">
                     <br>
                     <button onclick="addToFavorites('${img.image_url}', '${img.dominant}', ${img.score})">⭐ Favorite</button>
+                    <button onclick="document.getElementById('link').click()">Download</button>
+                    <a id="link" href="${img.image_url}" download hidden></a>
                     <p>Does this image match your expectation?</p>
                     <button class="upvote" onclick="userEvaluate('${img.image_url}','${emotion}',true)">👍</button><button class="downvote" onclick="userEvaluate('${img.image_url}','${emotion}',false)">👎</button>
                 </div>
@@ -112,6 +114,8 @@ const showFavorites = () => {
             <div class="result">
                 <img src="${img.url}" alt="Favorite">
                 <br>
+                <button onclick="document.getElementById('link').click()">Download</button>
+                <a id="link" href="${img.image_url}" download hidden></a>
             </div>
         `;
     });
