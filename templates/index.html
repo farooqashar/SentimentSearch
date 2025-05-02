@@ -41,11 +41,13 @@
         <button onclick="showTab('results')">Results</button>
         <button onclick="showTab('favorites')">Favorites</button>
         <button onclick="showTab('history')">History</button>
+        <button onclick="showTab('photos')">Uploaded Photos</button>
     </div>
 
     <div id="results" class="tab-content"></div>
     <div id="favorites" class="tab-content" style="display:none;"></div>
     <div id="history" class="tab-content" style="display:none;"></div>
+    <div id="photos" class="tab-content" style="display:none;"></div>
 
     <script src="{{ url_for('static', filename='js/script.js') }}"></script>
 </body>
