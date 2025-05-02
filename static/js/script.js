@@ -11,10 +11,14 @@ const sendQuery = () => {
 
     saveQueryToHistory(query);
 
+    let uploaded = JSON.parse(localStorage.getItem("uploaded") || "[]");
+
+    console.log("photos: ",  photos);
+
     fetch('/process_query', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ query })
+        body: JSON.stringify({ query, uploaded })
     })
     .then(response => response.json())
     .then(data => {
@@ -235,7 +239,7 @@ function handleUpload(event) {
         const imageUrl = e.target.result;
 
         const uploadedPhotos = JSON.parse(localStorage.getItem("uploaded") || "[]");
-        uploadedPhotos.push({url: imageUrl})
+        uploadedPhotos.push({url: e.target.result })
         localStorage.setItem("uploaded", JSON.stringify(uploadedPhotos));
         alert("Photo uploaded successfully!");
 
