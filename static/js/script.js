@@ -33,7 +33,7 @@ const sendQuery = () => {
             resultsDiv.innerHTML += `
                 <div class="result">
                     <img src="${img.image_url}" alt="Image">
-                    <p><strong>${img.dominant}</strong> (${img.score.toFixed(2)})</p>
+                    <br>
                     <button onclick="addToFavorites('${img.image_url}', '${img.dominant}', ${img.score})">⭐ Favorite</button>
                 </div>
             `;
@@ -107,7 +107,7 @@ const showFavorites = () => {
         favDiv.innerHTML += `
             <div class="result">
                 <img src="${img.url}" alt="Favorite">
-                <p><strong>${img.emotion}</strong> (${img.score.toFixed(2)})</p>
+                <br>
             </div>
         `;
     });
