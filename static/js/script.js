@@ -19,7 +19,7 @@ const sendQuery = () => {
     searchBtn.innerText = "Searching...";
 
     showTab('results');
-    
+
     const resultsDiv = document.getElementById("results");
     resultsDiv.innerHTML = "<img src = 'static/loading.gif'/>";
     saveQueryToHistory(query);
@@ -39,7 +39,7 @@ const sendQuery = () => {
             resultsDiv.innerHTML = "<p>No matching images found.</p>";
             return;
         }
-        
+
         showToast(`Search completed in ${data.time_elapsed} seconds`);
         data.results.forEach(img => {
             resultsDiv.innerHTML += `
@@ -47,7 +47,7 @@ const sendQuery = () => {
                     <img src="${img.image_url}" alt="Image">
                     <br>
                     <button onclick="addToFavorites('${img.image_url}')">⭐ Favorite</button>
-                    <button onclick="document.getElementById('link').click()">Download</button>
+                    <button onclick="document.getElementById('link').click()">📥 Download</button>
                     <a id="link" href="${img.image_url}" download hidden></a>
                     <p>Does this image match your expectation?</p>
                     <button class="upvote" onclick="userEvaluate('${img.image_url}','${emotion}',true)">👍</button><button class="downvote" onclick="userEvaluate('${img.image_url}','${emotion}',false)">👎</button>
@@ -133,7 +133,7 @@ const showFavorites = () => {
                 <img src="${img.url}" alt="Favorite">
                 <br>
                 <button onclick="removeFromFavorite('${img.url}')">💔 Favorite</button>
-                <button onclick="document.getElementById('link').click()">Download</button>
+                <button onclick="document.getElementById('link').click()">📥 Download</button>
                 <a id="link" href="${img.image_url}" download hidden></a>
             </div>
         `;
@@ -261,7 +261,7 @@ const showPhotos = () => {
     photoDiv.innerHTML = `
         <div>
             <h3>Your Photos</h3>
-            <button onclick="document.getElementById('uploadInput').click()">Upload</button>
+            <button onclick="document.getElementById('uploadInput').click()">📤 Upload</button>
             <input type="file" id="uploadInput" accept="image/*" style="display:none" onchange="handleUpload(event)">
         </div>
     `;
