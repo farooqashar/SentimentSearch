@@ -30,7 +30,7 @@ const sendQuery = () => {
             return;
         }
         
-        showToast("Search completed!");
+        showToast(`Search completed in ${data.time_elapsed} seconds`);
         data.results.forEach(img => {
             resultsDiv.innerHTML += `
                 <div class="result">

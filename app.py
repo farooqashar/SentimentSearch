@@ -1,6 +1,6 @@
 import base64
 import io
-import shutil
+import time
 import uuid
 from PIL import Image
 from flask import Flask, request, jsonify, render_template,json 
@@ -20,6 +20,7 @@ def home():
 
 @app.route('/process_query', methods=['POST'])
 def process_query():
+    start = time.time()
     for f in os.listdir(UPLOAD_CACHE_FOLDER):
         try:
             file_path = os.path.join(UPLOAD_CACHE_FOLDER, f)
@@ -82,13 +83,14 @@ def process_query():
         "dominant": img["dominant"]
     } for img in top_emotion_results]
 
-    # shutil.rmtree(UPLOAD_CACHE_FOLDER, ignore_errors=True)
+    end = time.time()
 
     return jsonify({
         "emotion": emotion_category,
         "month": month,
         "year": year,
         "top_n": top_n,
+        "time_elapsed":round(end-start,2),
         "results": results
     })
 
