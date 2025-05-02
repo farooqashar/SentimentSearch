@@ -186,5 +186,15 @@ function capturePhoto() {
     }, "image/jpeg");
 }
 
+function closeIntroModal() {
+    document.getElementById("introModal").style.display = "none";
+    localStorage.setItem("seenIntro", "true");
+}
+
+window.onload = function() {
+    if (!localStorage.getItem("seenIntro")) {
+        document.getElementById("introModal").style.display = "block";
+    }
+};
 
 showTab('results');

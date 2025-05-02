@@ -185,7 +185,7 @@ def filter_images_by_location(folder, target_location):
 
 
 ## EMOTION MATCHING ##
-def filter_images_by_emotion(image_paths, desired_emotion, top_n=3):
+def filter_images_by_emotion(image_paths, desired_emotion, top_n):
     cache = load_cache()
     scored_images = []
     expected_emotions = complex_emotion_map.get(desired_emotion, [desired_emotion])
@@ -222,6 +222,8 @@ def filter_images_by_emotion(image_paths, desired_emotion, top_n=3):
             debug_print(f"❌ Error analyzing {path}: {e}")
 
     save_cache(cache)
+    if not top_n:
+        top_n = len(scored_images)
     return sorted(scored_images, key=lambda x: x["score"], reverse=True)[:top_n]
 
 ## DISPLAY ##

@@ -6,6 +6,19 @@
     <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
 </head>
 <body>
+    <div id="introModal" class="modal" style="display:none;">
+        <div class="modal-content">
+          <h2>👋 Welcome to SentimentSearch!</h2>
+          <p>This tool helps you search your photos using voice and emotion-based filtering.</p>
+          <ul>
+              <li>🎤 Click the mic to speak your query (e.g., "Show me 5 photos from Paris in 2022").</li>
+              <li>📸 Use the camera button to take a photo of your current expression as a search filter.</li>
+              <li>💾 Your queries and favorites are saved for easy access!</li>
+          </ul>
+          <button onclick="closeIntroModal()">Got it!</button>
+        </div>
+    </div>
+
     <h1>🎉 SentimentSearch Web</h1>
 
     <div class="input-container">
