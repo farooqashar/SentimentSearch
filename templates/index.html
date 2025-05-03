@@ -57,13 +57,23 @@
 
       <div id="cameraModal" class="modal" style="display: none">
         <div class="modal-content">
-          <video id="video" autoplay playsinline></video>
-          <br />
-          <button onclick="capturePhoto()">📷 Capture</button>
-          <button onclick="closeCameraModal()">❌ Cancel</button>
+            <div id = "cameraInstruction">
+                <p>
+                    To use your current emotion as a template, take a photo and use the
+                    keyword <strong>"captured emotion"</strong> in your prompt!
+                    (not available for search with AI)
+                  </p>
+                  <button onclick="showCameraContent()">Next</button>
+            </div>
+          <div id="cameraContent" style="display: none;">
+            <video id="video" autoplay playsinline></video>
+            <br />
+            <button onclick="capturePhoto()">📷 Capture</button>
+            <button onclick="closeCameraModal()">❌ Cancel</button>
+          </div>
         </div>
       </div>
-
+      
       <div class="tabs">
         <button onclick="showTab('results')">🖼️ Results</button>
         <button onclick="showTab('favorites')">⭐ Favorites</button>

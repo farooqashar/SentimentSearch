@@ -134,7 +134,7 @@ img {
   background: white;
   margin: 10% auto;
   padding: 20px;
-  width: 80%;
+  width: 100%;
   max-width: 500px;
   border-radius: 10px;
   text-align: center;
@@ -190,4 +190,8 @@ img {
 
 .downvote {
   background: rgb(185, 59, 59);
+}
+
+video{
+    width: 80%;
 }

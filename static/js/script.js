@@ -331,6 +331,13 @@ const userEvaluate = (url, expected_emotion, met_expectation) => {
 
 window.onload = () => {
     document.getElementById("introModal").style.display = "block";
-  };  
+};  
+
+function showCameraContent() {
+    document.getElementById("cameraContent").style.display = "block";
+    const instruction = document.getElementById("cameraInstruction");
+    instruction.style.display = "none";
+}
+  
 
 showTab('results');

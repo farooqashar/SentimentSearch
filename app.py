@@ -164,7 +164,7 @@ def process_query(request):
 
     result_image += filtered_images
 
-    search_with_user = "my face" in text.lower()
+    search_with_user = "captured emotion" in text.lower()
     face_template_path = "user_face_templates/face_template.jpg"
     use_face_template = search_with_user and os.path.exists(face_template_path)
 
