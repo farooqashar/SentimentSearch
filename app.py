@@ -6,9 +6,13 @@ from PIL import Image
 from flask import Flask, request, jsonify, render_template,json 
 import os
 from deepface import DeepFace
-# from sentiment_search import extract_query_info, filter_images_by_date, filter_images_by_emotion, filter_images_by_location (V1)
+from google import genai
+from google.genai import types
 from sentiment_search_v2 import extract_query_info, filter_images_by_date, filter_images_by_emotion, filter_images_by_location
+from dotenv import load_dotenv
 
+
+load_dotenv()
 app = Flask(__name__)
 UPLOAD_CACHE_FOLDER = "static/user_upload_cache"
 EVAL_LOG = "user_evaluation.jsonl"
@@ -19,7 +23,102 @@ def home():
     return render_template('index.html')
 
 @app.route('/process_query', methods=['POST'])
-def process_query():
+def query_processing():
+    data = request.json
+    ai_use = data.get("useAI")
+
+    if ai_use:
+        return process_query_ai(request)
+    return process_query(request)
+
+def process_query_ai(request):
+    start = time.time()
+    client = genai.Client(api_key=os.getenv("GEMINI"))
+
+    data = request.json
+    text = data.get("query")
+    uploaded_photos = data.get("uploaded", [])
+    emotion_category, month, year, top_n, location = extract_query_info(text)
+
+
+    for f in os.listdir(UPLOAD_CACHE_FOLDER):
+        try:
+            os.remove(os.path.join(UPLOAD_CACHE_FOLDER, f))
+        except Exception as e:
+            print("⚠️ Error clearing cache:", e)
+
+    uploaded_image_paths = []
+    try:
+        for item in uploaded_photos:
+            base64_data = item.get("url", "").split(",")[-1]
+            img_bytes = base64.b64decode(base64_data)
+            img = Image.open(io.BytesIO(img_bytes)).convert("RGB")
+            img_path = os.path.join(UPLOAD_CACHE_FOLDER, f"{uuid.uuid4().hex}.jpg")
+            img.save(img_path)
+            uploaded_image_paths.append(img_path)
+    except Exception as e:
+        print("⚠️ Error saving uploaded images:", e)
+
+    static_folder = "static/images_v2"
+    static_image_paths = [
+        os.path.join(static_folder, f)
+        for f in os.listdir(static_folder)
+        if f.lower().endswith((".jpg", ".jpeg", ".png"))
+    ]
+
+    def evaluate_image(image_path):
+        prompt = f"""
+        Given the user's request: {text}
+        Does the following photo fulfill the user's request?
+        Answer only with 'yes' or 'no'.
+        """
+        try:
+            with open(image_path, "rb") as img_file:
+                image_bytes = img_file.read()
+
+            response = client.models.generate_content(
+                model="gemini-1.5-flash-latest",
+                contents=[types.Part.from_bytes(data = image_bytes, mime_type = "image/jpeg"), prompt]
+            )
+            return {
+                "image_path": image_path,
+                "answer": response.text.strip().lower()
+            }
+        except Exception as e:
+            print(f"❌ Error analyzing {image_path}: {e}")
+            return {
+                "image_path": image_path,
+                "error": str(e)
+            }
+
+    evaluated_uploaded = [evaluate_image(path) for path in uploaded_image_paths]
+    evaluated_static = [evaluate_image(path) for path in static_image_paths]
+
+    top_emotion_results = (evaluated_uploaded+evaluated_static)[0:top_n]
+    print(top_emotion_results)
+
+    results= []
+
+    for img_response in top_emotion_results:
+        if img_response["answer"] == "yes":
+            results.append({
+                "image_url": "/" + img_response["image_path"].replace("\\", "/"),
+            })
+ 
+    end = time.time()
+
+    return jsonify({
+        "emotion": emotion_category,
+        "month": month,
+        "year": year,
+        "top_n": top_n,
+        "time_elapsed":round(end-start,2),
+        "results": results
+    })
+
+
+
+def process_query(request):
     start = time.time()
     for f in os.listdir(UPLOAD_CACHE_FOLDER):
         try:

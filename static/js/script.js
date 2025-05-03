@@ -7,7 +7,7 @@ input.addEventListener("keypress", function(event) {
   }
 });
 
-const sendQuery = () => {
+const sendQuery = (useAI) => {
     const query = document.getElementById("query").value.trim();
     const searchBtn = document.querySelector(".search-button");
     if (!query) {
@@ -29,7 +29,7 @@ const sendQuery = () => {
     fetch('/process_query', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ query, uploaded })
+        body: JSON.stringify({ query, uploaded, useAI })
     })
     .then(response => response.json())
     .then(data => {

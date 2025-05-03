@@ -47,10 +47,13 @@
         <option value="Top 4 nostalgic pictures from New York">
         <option value="Give me top 7 photos from my captured emotion from Florida">
       </datalist>
-        <button class="search-button" onclick="sendQuery()">🔍 Search</button>
-        <button class="mic-button" onclick="startListening()">🎤 Speak</button>
-        <button class="camera-button" onclick="openCameraModal()">📸 Capture my face</button>
+        <button class="search-button" onclick="sendQuery(false)">🔍 Search</button>
+        <button class="search-button" onclick="sendQuery(true)">🧠 Search with AI</button>
       </div>
+
+      <button class="mic-button" onclick="startListening()">🎤 Speak</button>
+      <button class="camera-button" onclick="openCameraModal()">📸 Capture my face</button>
+
 
       <div id="cameraModal" class="modal" style="display: none">
         <div class="modal-content">

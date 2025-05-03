@@ -8,3 +8,4 @@ emotion_cache.json
 emotion_cache_v2.json
 session_results.jsonl
 session_results_v2.jsonl
+.env
