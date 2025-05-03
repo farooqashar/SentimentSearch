@@ -181,7 +181,7 @@ def filter_images_by_location(folder, target_location):
         path = os.path.join(folder, fname)
         location = get_image_location(path)
         if location:
-            if target_location in location:
+            if not target_location or target_location in location:
                 matching_images.append(path)
         else:
             matching_images.append(path)
