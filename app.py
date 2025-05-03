@@ -12,10 +12,10 @@ from sentiment_search_v2 import extract_query_info, filter_images_by_date, filte
 from dotenv import load_dotenv
 
 
-load_dotenv()
 app = Flask(__name__)
 UPLOAD_CACHE_FOLDER = "static/user_upload_cache"
 EVAL_LOG = "user_evaluation.jsonl"
+load_dotenv()
 os.makedirs(UPLOAD_CACHE_FOLDER, exist_ok=True)
 
 @app.route('/')

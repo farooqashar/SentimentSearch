@@ -329,4 +329,16 @@ const userEvaluate = (url, expected_emotion, met_expectation) => {
     .catch(() => showToast("Failed to submit feedback."));
 };
 
+window.onload = () => {
+    if (!localStorage.getItem("hasSeenIntro")) {
+      document.getElementById("introModal").style.display = "block";
+    }
+  };
+  
+  function closeIntroModal() {
+    document.getElementById("introModal").style.display = "none";
+    localStorage.setItem("hasSeenIntro", "true");  // Set flag so it doesn't show again
+  }
+  
+
 showTab('results');
