@@ -1,160 +1,193 @@
 body {
-    font-family: Arial, sans-serif;
-    background: #f4f6f8;
-    text-align: center;
-    padding: 30px;
+  font-family: Arial, sans-serif;
+  background: #f4f6f8;
+  text-align: center;
+  padding: 30px;
 }
 h1 {
-    color: #333;
+  color: #333;
 }
+
 .input-container {
-    margin: 20px 0;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-bottom: 20px;
+  justify-content: center;
 }
+
+.input-container input {
+  flex: 1;
+  padding: 10px;
+  font-size: 16px;
+  min-width: 200px;
+}
+
 input[type="text"] {
-    padding: 10px;
-    width: 300px;
-    border: 1px solid #ccc;
-    border-radius: 5px;
-    font-size: 16px;
+  padding: 10px;
+  width: 300px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  font-size: 16px;
 }
 button {
-    padding: 10px 20px;
-    margin: 5px;
-    background-color: #2196F3;
-    color: white;
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
-    font-size: 16px;
-    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-    transition: all 0.2s ease;
+  padding: 10px 20px;
+  margin: 5px;
+  background-color: #2196f3;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 16px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  transition: all 0.2s ease;
 }
 
 button:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 4px 8px rgba(0,0,0,0.2);
-    background-color: #1976D2;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  background-color: #1976d2;
 }
 .mic-button {
-    background-color: #2196F3;
+  background-color: #2196f3;
 }
 .mic-button:hover {
-    background-color: #1976D2;
+  background-color: #1976d2;
 }
 .mic-button.listening {
-    background-color: #4CAF50;
+  background-color: #4caf50;
 }
 .tabs button {
-    background-color: #e0e0e0;
-    color: #333;
+  background-color: #e0e0e0;
+  color: #333;
 }
 .tabs button:hover {
-    background-color: #d5d5d5;
+  background-color: #d5d5d5;
 }
 .tab-content {
-    border-top: 1px solid #ddd;
-    padding-top: 20px;
+  border-top: 1px solid #ddd;
+  padding-top: 20px;
 }
 
 .tabs button {
-    background-color: #e0e0e0;
-    color: #333;
-    border: none;
-    padding: 10px 20px;
-    margin: 2px;
-    border-radius: 5px;
-    cursor: pointer;
-    font-weight: bold;
-    transition: background-color 0.3s ease;
+  background-color: #e0e0e0;
+  color: #333;
+  border: none;
+  padding: 10px 20px;
+  margin: 2px;
+  border-radius: 5px;
+  cursor: pointer;
+  font-weight: bold;
+  transition: background-color 0.3s ease;
 }
 
 .tabs button.active-tab {
-    background-color: #9e9e9e;
-    color: white;
+  background-color: #9e9e9e;
+  color: white;
 }
 
 .result {
-    display: inline-block;
-    background: white;
-    padding: 10px;
-    margin: 15px;
-    border-radius: 10px;
-    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
-    animation: fadeIn 0.5s ease;
+  display: inline-block;
+  background: white;
+  padding: 10px;
+  margin: 15px;
+  border-radius: 10px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  animation: fadeIn 0.5s ease;
 }
 
 @keyframes fadeIn {
-    from { opacity: 0; transform: scale(0.95); }
-    to { opacity: 1; transform: scale(1); }
+  from {
+    opacity: 0;
+    transform: scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
 }
 img {
-    width: 200px;
-    border-radius: 8px;
+  width: 200px;
+  border-radius: 8px;
 }
 .camera-button {
-    background-color: #2196F3;
+  background-color: #2196f3;
 }
 .camera-button:hover {
-    background-color: #1976D2;
+  background-color: #1976d2;
 }
 
 .modal {
-    position: fixed;
-    top: 0; left: 0;
-    width: 100%; height: 100%;
-    background-color: rgba(0,0,0,0.6);
-    z-index: 1000;
-  }
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.4);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+}
 
-  .modal-content {
-    background: white;
-    margin: 10% auto;
-    padding: 20px;
-    width: 80%;
-    max-width: 500px;
-    border-radius: 10px;
-    text-align: center;
-  }
+.modal-content {
+  background: white;
+  margin: 10% auto;
+  padding: 20px;
+  width: 80%;
+  max-width: 500px;
+  border-radius: 10px;
+  text-align: center;
+}
 
-  .toast {
-    position: fixed;
-    bottom: 30px;
-    left: 50%;
-    transform: translateX(-50%);
-    background-color: #333;
-    color: white;
-    padding: 12px 20px;
-    border-radius: 6px;
-    font-size: 16px;
-    z-index: 1000;
-    opacity: 0;
-    pointer-events: none;
-    transition: opacity 0.5s ease;
+.modal-content ul {
+  list-style: none;
+  padding-left: 0;
+}
+
+.modal-content li {
+  margin-bottom: 10px;
+  font-size: 16px;
+}
+
+.toast {
+  position: fixed;
+  bottom: 30px;
+  left: 50%;
+  transform: translateX(-50%);
+  background-color: #333;
+  color: white;
+  padding: 12px 20px;
+  border-radius: 6px;
+  font-size: 16px;
+  z-index: 1000;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.5s ease;
 }
 
 .toast.show {
-    opacity: 1;
-    pointer-events: auto;
+  opacity: 1;
+  pointer-events: auto;
 }
 
 .toast.hidden {
-    opacity: 0;
+  opacity: 0;
 }
 
-
 .container {
-    max-width: 960px;
-    margin: 40px auto;
-    background: white;
-    border-radius: 12px;
-    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.1);
-    padding: 30px;
+  max-width: 960px;
+  margin: 40px auto;
+  background: white;
+  border-radius: 12px;
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.1);
+  padding: 30px;
 }
 
 .upvote {
-    background-color : #4CAF50;
+  background-color: #4caf50;
 }
 
 .downvote {
-    background : rgb(185, 59, 59);
+  background: rgb(185, 59, 59);
 }

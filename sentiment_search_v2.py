@@ -11,7 +11,7 @@ import cv2
 import threading
 import spacy
 from geopy.geocoders import Nominatim
-from util import complex_emotion_map
+from util import complex_emotion_map, emotion_synonyms
 
 ## CONFIGURATION ##
 debug = True
@@ -50,33 +50,38 @@ def extract_query_info(text):
     analyzer = SentimentIntensityAnalyzer()
     sentiment = analyzer.polarity_scores(text)
 
+    # Base and complex emotions
     deepface_emotions = ["happy", "sad", "angry", "surprise", "fear", "disgust", "neutral"]
+    all_emotions = set(deepface_emotions + list(complex_emotion_map.keys()))
 
-    words = text.split()
-    detected_emotion = "neutral"
+    # Emotion detection
+    words = re.findall(r"\b\w+\b", text)
+    detected_emotion = None
+
     for word in words:
-        if word in complex_emotion_map or word in deepface_emotions:
+        if word in complex_emotion_map:
             detected_emotion = word
+            break
+        elif word in deepface_emotions:
+            detected_emotion = word
+            break
+        elif word in emotion_synonyms:
+            detected_emotion = emotion_synonyms[word]
             break
 
     if any(neg in text for neg in ["not", "no", "never"]):
         detected_emotion = "neutral"
 
-    if detected_emotion == "neutral":
+    if not detected_emotion or detected_emotion not in all_emotions:
         compound = sentiment["compound"]
         if compound >= 0.3:
             detected_emotion = "happy"
         elif compound <= -0.3:
             detected_emotion = "sad"
+        else:
+            detected_emotion = "neutral"
 
-    location = None
-    nlp = spacy.load("en_core_web_sm")
-    doc = nlp(text)
-    for ent in doc.ents:
-        if ent.label_ in ("GPE", "LOC", "FAC"): 
-            location = ent.text
-            break
-
+    # Date parsing
     months = [
         "january", "february", "march", "april", "may", "june",
         "july", "august", "september", "october", "november", "december"
@@ -86,6 +91,7 @@ def extract_query_info(text):
     year_match = re.search(r"\b(20\d{2}|19\d{2})\b", text)
     found_year = int(year_match.group(1)) if year_match else None
 
+    # Top N
     top_n = 3
     match = re.search(r"top\s+(\d+)", text)
     if match:
@@ -98,6 +104,15 @@ def extract_query_info(text):
             } and "top" in text:
                 top_n = word_to_number(word)
                 break
+
+    # Location (via spaCy)
+    nlp = spacy.load("en_core_web_sm")
+    doc = nlp(text)
+    location = None
+    for ent in doc.ents:
+        if ent.label_ in ("GPE", "LOC", "FAC"):
+            location = ent.text
+            break
 
     return detected_emotion, found_month, found_year, top_n, location
 
@@ -167,7 +182,7 @@ def get_image_location(image_path):
                 location = geolocator.reverse(str(lat)+","+str(lon))
 
                 return location.address.lower() if location else None
-                
+
     except Exception as e:
         debug_print(f"⚠️ Could not get location from {image_path}: {e}")
     return None

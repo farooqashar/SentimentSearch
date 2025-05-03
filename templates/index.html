@@ -19,8 +19,8 @@
           </p>
           <ul>
             <li>
-              🎤 Click the mic to speak your query (e.g., "Show me 5 photos from
-              Paris in 2022").
+              🎤 Click the mic to speak your query (e.g., "Show me 5 goofiest
+              photos from Paris in January of 2022").
             </li>
             <li>
               📸 Use the camera button to take a photo of your current
@@ -36,15 +36,20 @@
 
       <div class="input-container">
         <input
-          type="text"
-          id="query"
-          placeholder="Type or speak your query..."
-        />
-        <button class="search-button" onclick="sendQuery()">Search</button>
+        type="text"
+        id="query"
+        list="query-suggestions"
+        placeholder="Type or speak your query..."
+      />
+      <datalist id="query-suggestions">
+        <option value="Show me 5 goofy photos from Paris in January of 2022">
+        <option value="Find 3 happy photos from Tokyo in March 2023">
+        <option value="Top 4 nostalgic pictures from New York">
+        <option value="Give me top 7 photos from my captured emotion from Florida">
+      </datalist>
+        <button class="search-button" onclick="sendQuery()">🔍 Search</button>
         <button class="mic-button" onclick="startListening()">🎤 Speak</button>
-        <button class="camera-button" onclick="openCameraModal()">
-          📸 Capture my face
-        </button>
+        <button class="camera-button" onclick="openCameraModal()">📸 Capture my face</button>
       </div>
 
       <div id="cameraModal" class="modal" style="display: none">
@@ -57,10 +62,10 @@
       </div>
 
       <div class="tabs">
-        <button onclick="showTab('results')">Results</button>
-        <button onclick="showTab('favorites')">Favorites</button>
-        <button onclick="showTab('history')">History</button>
-        <button onclick="showTab('photos')">Uploaded Photos</button>
+        <button onclick="showTab('results')">🖼️ Results</button>
+        <button onclick="showTab('favorites')">⭐ Favorites</button>
+        <button onclick="showTab('history')">📜 History</button>
+        <button onclick="showTab('photos')">📁 Uploaded</button>
       </div>
 
       <div id="results" class="tab-content"></div>
