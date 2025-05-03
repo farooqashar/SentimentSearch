@@ -275,6 +275,8 @@ const showPhotos = () => {
         photoDiv.innerHTML += `
             <div class="result">
                 <img src="${img.url}" alt="photo">
+                <br>
+                <button onclick="removeFromUpload('${img.url}')">Remove</button>
             </div>
         `;
     });
@@ -298,6 +300,14 @@ function handleUpload(event) {
     };
 
     reader.readAsDataURL(file);
+}
+
+const removeFromUpload = (url) => {
+    let uploaded = JSON.parse(localStorage.getItem("uploaded") || "[]");
+    uploaded = uploaded.filter(item => item.url !== url);
+    localStorage.setItem("uploaded", JSON.stringify(uploaded));
+    showToast("Removed from uploaded!");
+    showPhotos();
 }
 
 const userEvaluate = (url, expected_emotion, met_expectation) => {
