@@ -57,6 +57,11 @@ button:hover {
 .mic-button.listening {
   background-color: #4caf50;
 }
+
+.tabs{
+    margin-top: 30px;
+}
+
 .tabs button {
   background-color: #e0e0e0;
   color: #333;
