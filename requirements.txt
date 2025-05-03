@@ -5,3 +5,5 @@ deepface
 RealtimeSTT
 spacy
 geopy
+dotenv
+google-genai
