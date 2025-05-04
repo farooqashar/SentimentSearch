@@ -249,24 +249,27 @@ const showToast = (message, duration = 3000) => {
   }, duration);
 };
 
-async function fetchEvaluationAndUpdate() {
-  try {
-    const res = await fetch("/evaluation/percent");
-    const data = await res.json();
-    const percent = data.percent;
-    const matched = data.matched;
-    const total = data.total;
+function fetchEvaluationAndUpdate() {
+  fetch("/get_evaluation_summary")
+    .then((res) => res.json())
+    .then((data) => {
+      const evalSection = document.getElementById("evaluation-section");
 
-    const bar = document.getElementById("evaluation-bar");
-    const text = document.getElementById("evaluation-percent");
-    const container = document.getElementById("evaluation-container");
+      if (data.total === 0) {
+        evalSection.classList.add("hidden");
+        return;
+      }
 
-    bar.style.width = percent + "%";
-    text.textContent = `${percent}% matched (${matched} of ${total})`;
-    container.classList.remove("hidden");
-  } catch (err) {
-    console.error("Error fetching evaluation:", err);
-  }
+      evalSection.classList.remove("hidden");
+      const percent = Math.round((data.correct / data.total) * 100);
+      const bar = document.getElementById("evaluation-bar");
+      const label = document.getElementById("evaluation-percent");
+      bar.style.width = percent + "%";
+      label.innerText = `${percent}% of your results matched expectations (${data.correct}/${data.total})`;
+    })
+    .catch((err) => {
+      console.error("Could not update evaluation", err);
+    });
 }
 
 fetchEvaluationAndUpdate();

@@ -206,31 +206,28 @@ video{
   font-size: 1rem;
 }
 
-.evaluation-box {
-  border: 2px solid #4caf50;
-  padding: 1rem;
+.evaluation {
   margin-top: 2rem;
-  border-radius: 10px;
-  background-color: #f0fff0;
   text-align: center;
-  max-width: 400px;
-  margin-left: auto;
-  margin-right: auto;
+}
+
+.evaluation.hidden {
+  display: none;
+}
+
+#evaluation-bar-container {
+  width: 80%;
+  height: 20px;
+  background: #ddd;
+  border-radius: 10px;
+  margin: 0 auto;
+  overflow: hidden;
 }
 
 #evaluation-bar {
-  height: 20px;
-  background-color: #4caf50;
+  height: 100%;
+  width: 0%;
+  background: #4caf50;
+  transition: width 0.5s;
   border-radius: 10px;
-  transition: width 0.5s ease-in-out;
-}
-
-#evaluation-percent {
-  margin-top: 0.5rem;
-  font-size: 1.2rem;
-  font-weight: bold;
-}
-
-.hidden {
-  display: none;
 }

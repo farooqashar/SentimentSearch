@@ -224,7 +224,7 @@ def evaluate_result():
 
     return jsonify({"status": "ok"})
 
-@app.route("/evaluation/percent")
+@app.route("/get_evaluation_summary")
 def evaluation_percent():
     matches = 0
     total = 0
@@ -242,7 +242,10 @@ def evaluation_percent():
     except FileNotFoundError:
         percent = 0
 
-    return jsonify({"percent": percent, "matched": matches, "total": total})
+    return jsonify({"percent": percent, "correct": matches, "total": total})
 
 if __name__ == "__main__":
+    # CLEAR EVALUATION LOG FILE WHEN THE APP STARTS
+    with open(EVAL_LOG, "w") as f:
+        f.truncate()
     app.run(debug=True)
