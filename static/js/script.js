@@ -143,13 +143,14 @@ const showFavorites = () => {
 const showHistory = () => {
   const histDiv = document.getElementById("history");
   let history = JSON.parse(localStorage.getItem("history") || "[]");
+  history.reverse();
   histDiv.innerHTML = "<h3>Query History</h3>";
   if (history.length === 0) {
     histDiv.innerHTML += "<p>No past queries.</p>";
     return;
   }
   history.forEach((item) => {
-    histDiv.innerHTML += `<p onclick="repeatQuery('${item.query}')">🕑 ${item.query} <small>(${item.time})</small></p>`;
+    histDiv.innerHTML += `<p style="cursor: pointer;" onclick="repeatQuery('${item.query}')">🕑 ${item.query} <small>(${item.time})</small></p>`;
   });
 };
 
