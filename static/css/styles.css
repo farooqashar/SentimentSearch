@@ -236,3 +236,15 @@ video{
   opacity: 0.5;
   cursor: not-allowed;
 }
+
+.beta-badge {
+  position: absolute;
+  top: -0.5em;
+  right: -0.5em;
+  background-color: gold;
+  color: black;
+  font-size: 0.7em;
+  padding: 0.2em 0.4em;
+  border-radius: 0.5em;
+  font-weight: bold;
+}

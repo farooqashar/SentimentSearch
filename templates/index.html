@@ -56,9 +56,12 @@
           <button class="search-button" onclick="sendQuery(false)">
             🔍 Search
           </button>
-          <button class="search-button" onclick="sendQuery(true)">
-            🧠 Search with AI
-          </button>
+          <div style="display: inline-block; position: relative;">
+            <button class="search-button" onclick="sendQuery(true)">
+                🧠 Search with AI
+            </button>
+            <span class="beta-badge">Beta</span>
+        </div>
           <button class="mic-button" onclick="startListening()">
             🎤 Speak
           </button>
