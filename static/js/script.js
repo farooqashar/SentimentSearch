@@ -46,11 +46,11 @@ const sendQuery = (useAI) => {
                 <div class="result">
                     <img src="${img.image_url}" alt="Image">
                     <br>
-                    <button onclick="addToFavorites('${img.image_url}')">⭐ Favorite</button>
+                    <button onclick="this.disabled=true; addToFavorites('${img.image_url}'); setTimeout(() => {this.disabled = false; }, 5000);">⭐ Favorite</button>
                     <button onclick="document.getElementById('link').click()">📥 Download</button>
                     <a id="link" href="${img.image_url}" download hidden></a>
                     <p>Does this image match your expectation?</p>
-                    <button class="upvote" onclick="userEvaluate('${img.image_url}','${emotion}',true)">👍</button><button class="downvote" onclick="userEvaluate('${img.image_url}','${emotion}',false)">👎</button>
+                    <button class="upvote" onclick="this.disabled=true;this.classList.add('disabled-button'); userEvaluate('${img.image_url}','${emotion}',true)">👍</button><button class="downvote" onclick="this.disabled=true;  this.classList.add('disabled-button'); userEvaluate('${img.image_url}','${emotion}',false)">👎</button>
                 </div>
             `;
       });

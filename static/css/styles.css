@@ -231,3 +231,8 @@ video{
   transition: width 0.5s;
   border-radius: 10px;
 }
+
+.disabled-button {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
