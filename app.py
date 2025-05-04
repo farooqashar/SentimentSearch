@@ -3,7 +3,7 @@ import io
 import time
 import uuid
 from PIL import Image
-from flask import Flask, request, jsonify, render_template,json 
+from flask import Flask, request, jsonify, render_template,json
 import os
 from deepface import DeepFace
 from google import genai
@@ -104,7 +104,7 @@ def process_query_ai(request):
             results.append({
                 "image_url": "/" + img_response["image_path"].replace("\\", "/"),
             })
- 
+
     end = time.time()
 
     return jsonify({
@@ -223,6 +223,26 @@ def evaluate_result():
         f.write(json.dumps(log_entry) + "\n")
 
     return jsonify({"status": "ok"})
+
+@app.route("/evaluation/percent")
+def evaluation_percent():
+    matches = 0
+    total = 0
+    try:
+        with open("user_evaluation.jsonl", "r") as f:
+            for line in f:
+                try:
+                    entry = json.loads(line)
+                    total += 1
+                    if entry.get("met_expectation"):
+                        matches += 1
+                except json.JSONDecodeError:
+                    continue
+        percent = int((matches / total) * 100) if total > 0 else 0
+    except FileNotFoundError:
+        percent = 0
+
+    return jsonify({"percent": percent, "matched": matches, "total": total})
 
 if __name__ == "__main__":
     app.run(debug=True)
