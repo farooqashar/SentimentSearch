@@ -34,38 +34,54 @@
 
       <h1>🎉 SentimentSearch Web</h1>
 
-      <div class="input-container">
+      <div class="input-group">
         <input
-        type="text"
-        id="query"
-        list="query-suggestions"
-        placeholder="Type or speak your query..."
-      />
-      <datalist id="query-suggestions">
-        <option value="Show me 5 goofy photos from Paris in January of 2022">
-        <option value="Find 3 happy photos from Tokyo in March 2023">
-        <option value="Top 4 nostalgic pictures from New York">
-        <option value="Give me top 7 photos from my captured emotion from Florida">
-      </datalist>
-        <button class="search-button" onclick="sendQuery(false)">🔍 Search</button>
-        <button class="search-button" onclick="sendQuery(true)">🧠 Search with AI</button>
+          type="text"
+          id="query"
+          list="query-suggestions"
+          placeholder="Type or speak your query..."
+        />
+        <datalist id="query-suggestions">
+          <option
+            value="Show me 5 goofy photos from Paris in January of 2022"
+          ></option>
+          <option value="Find 3 happy photos from Tokyo in March 2023"></option>
+          <option value="Top 4 nostalgic pictures from New York"></option>
+          <option
+            value="Give me top 7 photos from my captured emotion from Florida"
+          ></option>
+        </datalist>
+
+        <div class="button-group">
+          <button class="search-button" onclick="sendQuery(false)">
+            🔍 Search
+          </button>
+          <div style="display: inline-block; position: relative;">
+            <button class="search-button" onclick="sendQuery(true)">
+                🧠 Search with AI
+            </button>
+            <span class="beta-badge">Beta</span>
+        </div>
+          <button class="mic-button" onclick="startListening()">
+            🎤 Speak
+          </button>
+          <button class="camera-button" onclick="openCameraModal()">
+            📸 Capture my face
+          </button>
+        </div>
       </div>
-
-      <button class="mic-button" onclick="startListening()">🎤 Speak</button>
-      <button class="camera-button" onclick="openCameraModal()">📸 Capture my face</button>
-
 
       <div id="cameraModal" class="modal" style="display: none">
         <div class="modal-content">
-            <div id = "cameraInstruction">
-                <p>
-                    To use your current emotion as a template, take a photo and use the
-                    keyword <strong>"captured emotion"</strong> in your prompt!
-                    (not available for search with AI)
-                  </p>
-                  <button onclick="showCameraContent()">Next</button>
-            </div>
-          <div id="cameraContent" style="display: none;">
+          <div id="cameraInstruction">
+            <p>
+              To use your current emotion as a template, take a photo and use
+              the keyword <strong>"captured emotion"</strong> in your prompt!
+              (not available for search with AI)
+            </p>
+            <button onclick="showCameraContent()">Next</button>
+          </div>
+          <div id="cameraContent" style="display: none">
             <video id="video" autoplay playsinline></video>
             <br />
             <button onclick="capturePhoto()">📷 Capture</button>
@@ -73,7 +89,7 @@
           </div>
         </div>
       </div>
-      
+
       <div class="tabs">
         <button onclick="showTab('results')">🖼️ Results</button>
         <button onclick="showTab('favorites')">⭐ Favorites</button>
@@ -90,6 +106,14 @@
       <div id="toast" class="toast hidden"></div>
 
       <script src="{{ url_for('static', filename='js/script.js') }}"></script>
+    </div>
+    <!-- Evaluation Results (Initially Hidden) -->
+    <div id="evaluation-section" class="evaluation hidden">
+      <h3>📊 Accuracy of Search Results</h3>
+      <div id="evaluation-bar-container">
+        <div id="evaluation-bar"></div>
+      </div>
+      <p id="evaluation-percent"></p>
     </div>
   </body>
 </html>

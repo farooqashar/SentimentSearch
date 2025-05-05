@@ -1,5 +1,8 @@
+<<<<<<< HEAD
 {"expected_emotion": "neutral", "met_expectation": true, "url": "/static/user_upload_cache/e29d2387ca0a4dffbbc99a61ce667fe0.jpg"}
 {"expected_emotion": "neutral", "met_expectation": false, "url": "/static/images_v2/goofy_2.png"}
 {"expected_emotion": "happy", "met_expectation": true, "url": "/static/images_v2/goofy_3.png"}
 {"expected_emotion": "happy", "met_expectation": false, "url": "/static/images_v2/fear_1.png"}
 {"expected_emotion": "neutral", "met_expectation": true, "url": "/static/images_v2/goofy_4.JPG"}
+=======
+>>>>>>> 04e8ee7e81e65119e6d32ac1376c528dfa53375e
