@@ -244,6 +244,16 @@ def evaluation_percent():
 
     return jsonify({"percent": percent, "correct": matches, "total": total})
 
+@app.route('/all_photos')
+def all_photos():
+    folder = 'static/images_v2'
+    image_files = [
+        os.path.join('/', folder, f).replace('\\', '/')
+        for f in os.listdir(folder)
+        if f.lower().endswith(('.jpg', '.jpeg', '.png'))
+    ]
+    return jsonify(image_files)
+
 if __name__ == "__main__":
     # CLEAR EVALUATION LOG FILE WHEN THE APP STARTS
     with open(EVAL_LOG, "w") as f:
