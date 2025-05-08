@@ -11,3 +11,6 @@ session_results_v2.jsonl
 user_evaluation.jsonl
 
 .env
+user_face_templates
+static/user_upload_cache
+user_face_templates/face_template.jpg

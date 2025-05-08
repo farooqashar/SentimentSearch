@@ -165,6 +165,7 @@ const showTab = (tabName) => {
   document.getElementById("favorites").style.display = "none";
   document.getElementById("history").style.display = "none";
   document.getElementById("photos").style.display = "none";
+  document.getElementById("all").style.display = "none";
 
   document.getElementById(tabName).style.display = "block";
 
@@ -176,6 +177,7 @@ const showTab = (tabName) => {
     favorites: 1,
     history: 2,
     photos: 3,
+    all: 4
   };
   document
     .querySelectorAll(".tabs button")
@@ -184,6 +186,7 @@ const showTab = (tabName) => {
   if (tabName === "favorites") showFavorites();
   if (tabName === "history") showHistory();
   if (tabName === "photos") showPhotos();
+  if (tabName === "all") showAllPhotos();
 };
 
 function openCameraModal() {
@@ -297,17 +300,35 @@ const showPhotos = () => {
     photoDiv.innerHTML += "<p>No Photos yet.</p>";
     return;
   }
+}
 
-  Photos.forEach((img) => {
-    photoDiv.innerHTML += `
+const showAllPhotos = () => {
+    const photoDiv = document.getElementById("all");
+    photoDiv.innerHTML = `
+      <div>
+        <h3>All Photos in Search Database</h3>
+      </div>
+    `;
+  
+    fetch('/all_photos')
+      .then(response => response.json())
+      .then((Photos) => {
+        console.log(Photos)
+        if (Photos.length === 0) {
+          photoDiv.innerHTML += "<p>No Photos yet.</p>";
+          return;
+        }
+  
+        Photos.forEach((url) => {
+          photoDiv.innerHTML += `
             <div class="result">
-                <img src="${img.url}" alt="photo">
-                <br>
-                <button onclick="removeFromUpload('${img.url}')">Remove</button>
+              <img src="${url}" alt="photo">
             </div>
-        `;
-  });
-};
+          `;
+        });
+      });
+  };
+  
 
 function handleUpload(event) {
   const file = event.target.files[0];
