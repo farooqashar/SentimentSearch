@@ -92,7 +92,7 @@ def extract_query_info(text):
     found_year = int(year_match.group(1)) if year_match else None
 
     # Top N
-    top_n = 3
+    top_n = None
     match = re.search(r"top\s+(\d+)", text)
     if match:
         top_n = int(match.group(1))
