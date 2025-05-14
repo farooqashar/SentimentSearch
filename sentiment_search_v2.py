@@ -94,6 +94,7 @@ def extract_query_info(text):
     # Top N
     top_n = None
     match = re.search(r"top\s+(\d+)", text)
+    print("match: ",match)
     if match:
         top_n = int(match.group(1))
     else:
